@@ -1,0 +1,26 @@
+
+
+create table Shelter (
+	Shelter_ID VARCHAR(10) NOT NULL,
+	Address VARCHAR(50) NOT NULL,
+	Tel_No VARCHAR(20),
+	Capacity INT NOT NULL,
+PRIMARY KEY (Shelter_ID)
+);
+
+
+COLUMN Shelter_ID FORMAT A10 HEADING 'Shelter ID' ;
+COLUMN Tel_No HEADING 'Tel No';
+
+
+
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-01', '35 Havey Plaza', '930-973-8396', 28);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-02', '0669 Clemons Terrace', '900-675-1517', 46);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-03', '7 Porter Park', '102-808-6487', 78);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-04', '303 Truax Way', '823-955-2107', 36);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-05', '3 Clove Junction', '653-228-7994', 75);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-06', '3299 Fordem Center', '859-311-5304', 29);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-07', '9598 Shasta Lane', '734-304-2672', 32);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-08', '6 Northport Alley', '650-591-9205', 29);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-09', '07950 Brickson Park Plaza', '879-604-6510', 55);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-10', '4 Lotheville Crossing', '750-548-0453', 26);

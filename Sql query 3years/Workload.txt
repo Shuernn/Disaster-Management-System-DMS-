@@ -1,0 +1,113 @@
+create table Workload (
+	Staff_ID VARCHAR(15),
+	Task_ID VARCHAR(5),
+	TaskDate DATE,
+	Shelter_ID VARCHAR(10),
+	StartTime VARCHAR(50),
+	EndTime VARCHAR(50),
+PRIMARY KEY (Staff_ID, Task_ID, TaskDate),
+FOREIGN KEY (Staff_ID) REFERENCES Staff(Staff_ID),
+FOREIGN KEY (Task_ID) REFERENCES Task(Task_ID),
+FOREIGN KEY (Shelter_ID) REFERENCES Shelter(Shelter_ID)
+);
+
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S36', 'T16', '02-May-2019', 'SH-05', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S36', 'T07', '02-Jan-2017', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S40', 'T18', '24-Jun-2018', 'SH-08', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S08', 'T05', '01-Jul-2019', 'SH-02', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S14', 'T16', '25-Mar-2018', 'SH-03', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S31', 'T06', '01-May-2017', 'SH-02', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S35', 'T17', '11-Sep-2018', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S31', 'T06', '13-Mar-2017', 'SH-01', '10:00 PM', '5:00 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S09', 'T14', '01-Jun-2019', 'SH-06', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S38', 'T10', '13-Apr-2017', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S11', 'T19', '22-May-2017', 'SH-05', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S08', 'T10', '24-Jan-2018', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S33', 'T05', '03-Jul-2019', 'SH-07', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S09', 'T15', '03-Mar-2017', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S05', 'T18', '20-Nov-2019', 'SH-10', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S08', 'T10', '04-Jun-2017', 'SH-09', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S23', 'T16', '09-Feb-2018', 'SH-05', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S21', 'T15', '04-Jan-2019', 'SH-07', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S08', 'T06', '18-May-2018', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T16', '07-Aug-2019', 'SH-08', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T17', '12-Sep-2017', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S30', 'T17', '26-Feb-2019', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S13', 'T03', '22-May-2018', 'SH-08', '12:00 AM', '8:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S04', 'T17', '03-Dec-2018', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S06', 'T06', '05-Mar-2017', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S35', 'T17', '18-Mar-2019', 'SH-06', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S37', 'T08', '22-Apr-2019', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T19', '19-Jan-2018', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S23', 'T19', '28-Jun-2019', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T17', '23-Jun-2019', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S13', 'T03', '08-Oct-2019', 'SH-04', '12:00 AM', '8:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S27', 'T16', '01-Sep-2018', 'SH-01', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S37', 'T11', '02-Jul-2019', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S28', 'T12', '04-May-2017', 'SH-07', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T18', '18-Feb-2018', 'SH-06', '9:00 PM', '9:00 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S33', 'T05', '05-May-2019', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S20', 'T01', '14-Sep-2017', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S32', 'T09', '02-Jun-2018', 'SH-09', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S03', 'T13', '21-Mar-2019', 'SH-09', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S34', 'T04', '02-Jul-2018', 'SH-09', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S07', 'T15', '25-Aug-2018', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S11', 'T18', '09-Apr-2018', 'SH-05', '11:00 PM', '1:00 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S27', 'T16', '07-Sep-2017', 'SH-01', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S35', 'T18', '22-Jun-2017', 'SH-01', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T16', '29-Jan-2017', 'SH-06', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S23', 'T19', '26-Mar-2018', 'SH-09', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S30', 'T19', '10-Jul-2017', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S24', 'T05', '28-Jun-2017', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S10', 'T20', '24-Jul-2019', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S22', 'T08', '21-Jul-2019', 'SH-07', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T18', '11-May-2018', 'SH-04', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S28', 'T12', '28-Nov-2017', 'SH-01', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S31', 'T02', '27-Sep-2017', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S29', 'T04', '28-Apr-2018', 'SH-10', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S30', 'T19', '23-Dec-2017', 'SH-06', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S29', 'T04', '12-Feb-2017', 'SH-06', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S07', 'T14', '07-Apr-2017', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S27', 'T16', '23-Jun-2017', 'SH-03', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T18', '23-Dec-2017', 'SH-08', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S01', 'T16', '18-Jun-2019', 'SH-07', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T16', '14-Dec-2017', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S17', 'T16', '17-Jun-2019', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S14', 'T19', '01-Aug-2018', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S24', 'T01', '15-May-2019', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S25', 'T16', '02-Aug-2017', 'SH-05', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S02', 'T14', '23-Apr-2017', 'SH-02', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S40', 'T17', '16-Jan-2019', 'SH-05', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S07', 'T13', '28-Oct-2018', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S05', 'T18', '27-Jun-2019', 'SH-08', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S26', 'T17', '03-Feb-2018', 'SH-05', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T18', '13-Jan-2019', 'SH-06', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S15', 'T04', '03-Sep-2017', 'SH-09', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S20', 'T11', '29-Mar-2019', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S13', 'T04', '11-Mar-2017', 'SH-09', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S23', 'T18', '22-Mar-2017', 'SH-01', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S31', 'T11', '18-May-2017', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S05', 'T17', '06-Feb-2019', 'SH-06', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S34', 'T04', '24-Jun-2019', 'SH-04', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S21', 'T15', '17-Oct-2017', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S13', 'T04', '17-Nov-2018', 'SH-09', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S33', 'T02', '21-Apr-2019', 'SH-07', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S13', 'T03', '04-Mar-2017', 'SH-09', '12:00 AM', '8:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T17', '16-Mar-2017', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S19', 'T06', '12-Nov-2019', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S28', 'T06', '06-Jun-2018', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S06', 'T12', '04-Feb-2018', 'SH-10', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S07', 'T15', '10-Aug-2018', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S10', 'T18', '04-Jul-2019', 'SH-07', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S26', 'T20', '10-Jul-2017', 'SH-09', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S15', 'T03', '16-Mar-2017', 'SH-03', '12:00 AM', '8:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S34', 'T04', '10-Sep-2017', 'SH-04', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T16', '02-Jul-2019', 'SH-04', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T17', '27-Dec-2018', 'SH-05', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S19', 'T09', '25-Apr-2017', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S26', 'T17', '01-Jul-2017', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S02', 'T14', '03-Oct-2018', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S36', 'T16', '28-Jul-2017', 'SH-01', '12:00 AM', '8:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S39', 'T05', '25-Oct-2019', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S31', 'T11', '27-Mar-2018', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T19', '18-May-2017', 'SH-03', '12:00 AM', '11:59 PM');

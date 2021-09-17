@@ -1,0 +1,71 @@
+set linesize 150
+set pagesize 140
+
+
+create table Victim (
+	Victim_ID VARCHAR(15) NOT NULL,
+	Victim_Name VARCHAR(30) NOT NULL,
+	Gender VARCHAR(15) NOT NULL,
+	Tel_No VARCHAR(25),
+	Address VARCHAR(50) NOT NULL,
+PRIMARY KEY(Victim_ID),
+CONSTRAINT chk_gender check (UPPER(gender) IN ('M', 'F'))
+);
+
+
+COLUMN Victim_ID FORMAT A12 HEADING 'Victim ID' ;
+COLUMN Victim_Name HEADING 'Victim Name';
+COLUMN Tel_No HEADING 'Tel No';
+
+
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-001', 'Abie Olrenshaw', 'M', '907-418-1437', '1461 Westend Lane');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-002', 'Jock Daudray', 'M', '723-720-0375', '980 Elgar Lane');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-003', 'Terri Cockran', 'M', '579-250-6144', '1 Packers Crossing');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-004', 'Agosto Ughi', 'M', '704-898-0351', '23847 Rutledge Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-005', 'Pepito Shimon', 'M', '857-578-8011', '72293 Scofield Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-006', 'Dave Bohden', 'M', '622-277-3729', '961 Porter Alley');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-007', 'Julio Gildersleeve', 'M', '296-490-5434', '7 Ronald Regan Avenue');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-008', 'Datha Dartan', 'F', '658-780-0730', '1 Bluejay Plaza');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-009', 'Kearney Cameron', 'M', '436-829-0168', '9689 Waywood Pass');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-010', 'Leonhard Groom', 'M', '365-784-7811', '782 Little Fleur Parkway');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-011', 'Rossie Taberer', 'M', '464-288-1490', '8907 5th Center');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-012', 'Roxanne Doohan', 'F', '976-176-5219', '37334 Cascade Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-013', 'Regan Gantlett', 'F', '209-800-4501', '32 Kipling Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-014', 'Yehudi Outibridge', 'M', '696-599-4936', '720 Transport Road');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-015', 'Gawen Aylwin', 'M', '252-116-8553', '7 High Crossing Road');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-016', 'Nichols O''Luby', 'M', '598-482-5982', '7 Erie Road');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-017', 'Jonah Bartolomeu', 'M', '715-655-9411', '5882 Continental Alley');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-018', 'Sallee Colnett', 'F', '945-321-2341', '8 Loomis Drive');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-019', 'Carolina Reide', 'F', '905-401-3727', '41 Sullivan Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-020', 'Stanly Treagus', 'M', '324-934-7380', '989 Summit Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-021', 'Blake Hassekl', 'M', '701-242-4765', '7063 Kings Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-022', 'Darrick Moubray', 'M', '950-498-2145', '838 Colorado Pass');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-023', 'Tabby Bartolacci', 'F', '977-426-8789', '93 Welch Way');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-024', 'Francis Camois', 'M', '692-621-5523', '18 Victoria Place');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-025', 'Ganny Kemetz', 'M', '223-530-2976', '051 3rd Drive');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-026', 'Rycca Corsar', 'F', '836-409-6284', '3415 Marcy Hill');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-027', 'Eveline Bruneton', 'F', '678-566-3108', '577 Lighthouse Bay Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-028', 'Ruddie Trigg', 'M', '617-122-2631', '03 Jackson Road');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-029', 'Jamal Croxton', 'M', '790-120-5929', '5 American Junction');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-030', 'Giordano Baudinet', 'M', '347-853-3065', '148 Kings Lane');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-031', 'Miran Bachshell', 'F', '352-999-3806', '77781 Stang Point');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-032', 'Margarete Turford', 'F', '807-934-3311', '17 North Street');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-033', 'Alisha Veness', 'F', '254-558-5695', '268 Dennis Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-034', 'Mikel Padefield', 'M', '327-466-6226', '85 Beilfuss Parkway');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-035', 'Erda Gittins', 'F', '605-261-4937', '5 Londonderry Hill');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-036', 'Bianka Scane', 'F', '956-285-1288', '0 Jay Street');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-037', 'Florenza Alesin', 'F', '307-874-1032', '247 Forest Run Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-038', 'Erda Branston', 'F', '803-491-0567', '361 Sloan Place');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-039', 'Pippo Putland', 'M', '316-645-5878', '7736 Troy Hill');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-040', 'Ardisj Verma', 'F', '905-910-0938', '0 Comanche Lane');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-041', 'Kathi Dunnan', 'F', '429-579-9656', '9 Pankratz Place');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-042', 'Merwyn Jencken', 'M', '683-685-1403', '924 Montana Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-043', 'Manuel Tregoning', 'M', '396-480-1063', '05 Harper Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-044', 'Enrica Ezele', 'F', '841-441-9895', '1 Claremont Court');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-045', 'Sandro Suermeiers', 'M', '850-194-5853', '3 Logan Pass');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-046', 'Teddi Ethelstone', 'F', '791-330-7609', '6180 Mayfield Lane');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-047', 'Barr Kelby', 'M', '574-510-2716', '442 Harbort Court');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-048', 'Elvis Cottesford', 'M', '736-904-6672', '4 Muir Place');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-049', 'Willdon Liccardi', 'M', '982-703-3024', '78 Bellgrove Way');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-050', 'Rurik McWilliams', 'M', '836-419-1772', '0 Buell Point');
+

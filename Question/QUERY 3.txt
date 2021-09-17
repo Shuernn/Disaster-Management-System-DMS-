@@ -1,0 +1,24 @@
+
+
+COLUMN Donor_ID FORMAT A12 HEADING 'Donor ID' ;
+COLUMN Tel_No HEADING 'Tel No';
+COLUMN Donation_No FORMAT A12 HEADING 'Donation No' ;
+COLUMN Donation_Type FORMAT A14 HEADING 'Donation Type';
+COLUMN Donation_Date FORMAT A14 HEADING 'Donation Date';
+COLUMN Amount FORMAT $9999.99 HEADING 'Amount (RM)';
+
+ACCEPT donor_id VARCHAR() 
+PROMPT 'Enter donor ID (D01 - D02):';
+
+BREAK ON donor_id  ON name SKIP 2 ON gender ON tel_no ;
+
+SELECT d.donor_id, name, gender, tel_no, donation_no, donation_type, amount, donation_date
+FROM donor d, donation do
+WHERE d.donor_id = do.donor_id AND d.donor_id = '&donor_id' AND donation_date BETWEEN '01/Jan/2019' AND '31/Dec/2019'
+ORDER BY d.donor_id, donation_no;
+
+CLEAR BREAK;
+CLEAR COLUMNS;
+CLEAR COMPUTE;
+
+

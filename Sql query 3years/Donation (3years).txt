@@ -1,0 +1,71 @@
+ 
+create table Donation (
+	Donation_No VARCHAR(10) NOT NULL,
+	Donor_ID VARCHAR(10) NOT NULL,
+	Donation_Date DATE NOT NULL,
+	Donation_Type VARCHAR(10) NOT NULL,
+	Amount NUMBER(6) ,
+PRIMARY KEY(Donation_No),
+FOREIGN KEY (Donor_ID) REFERENCES DONOR(Donor_ID),
+CONSTRAINT chk_Donation_Type check (Donation_type IN ('Food', 'Supply', 'Cash'))
+);
+
+
+COLUMN Donation_No FORMAT A12 HEADING 'Donation No' ;
+COLUMN Donation_Date FORMAT A14 HEADING 'Donation Date';
+COLUMN Donation_Type FORMAT A14 HEADING 'Donation Type';
+COLUMN Amount FORMAT $9999.99 HEADING 'Amount (RM)';
+
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-001', 'D08', '20-Dec-2016', 'Cash', 232);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-002', 'D26', '31-Dec-2016', 'Supply', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-003', 'D01', '16-Jan-2017', 'Cash', 172);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-004', 'D09', '26-Jan-2017', 'Supply', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-005', 'D24', '06-Mar-2017', 'Supply', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-006', 'D16', '03-May-2017', 'Supply', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-007', 'D29', '08-Jul-2017', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-008', 'D02', '24-Sep-2017', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-009', 'D11', '22-Oct-2017', 'Cash', 26);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-010', 'D21', '12-Oct-2017', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-011', 'D02', '07-Nov-2017', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-012', 'D14', '02-Jan-2018', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-013', 'D18', '21-Feb-2018', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-014', 'D10', '16-Apr-2018', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-015', 'D27', '21-Jun-2018', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-016', 'D15', '09-Jun-2018', 'Cash', 71);								
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-017', 'D04', '04-Aug-2018', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-018', 'D19', '08-Aug-2018', 'Cash', 498);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-019', 'D10', '28-Sep-2018', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-020', 'D01', '06-Oct-2018', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-021', 'D28', '25-Dec-2018', 'Supply', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-022', 'D14', '27-Jan-2019', 'Cash', 270);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-023', 'D28', '27-Mar-2019', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-024', 'D23', '21-May-2019', 'Cash', 240);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-025', 'D12', '28-May-2019', 'Supply', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-026', 'D29', '31-May-2019', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-027', 'D15', '31-May-2019', 'Cash', 322);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-028', 'D17', '06-Jun-2019', 'Cash', 225);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-029', 'D25', '12-Jun-2019', 'Supply', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-030', 'D23', '24-Jun-2019', 'Cash', 383);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-031', 'D05', '26-Jun-2019', 'Cash', 331);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-032', 'D20', '07-Jul-2019', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-033', 'D26', '17-Jul-2019', 'Cash', 9);								
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-034', 'D18', '18-Jul-2019', 'Cash', 191);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-035', 'D19', '19-Jul-2019', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-036', 'D22', '28-Jul-2019', 'Supply', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-037', 'D07', '05-Aug-2019', 'Cash', 94);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-038', 'D03', '07-Aug-2019', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-039', 'D24', '18-Aug-2019', 'Cash', 134);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-040', 'D28', '29-Aug-2019', 'Cash', 411);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-041', 'D30', '09-Sep-2019', 'Supply', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-042', 'D16', '09-Sep-2019', 'Cash', 394);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-043', 'D12', '17-Sep-2019', 'Cash', 38);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-044', 'D06', '21-Sep-2019', 'Supply', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-045', 'D25', '30-Oct-2019', 'Cash', 91);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-046', 'D10', '15-Nov-2019', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-047', 'D16', '17-Nov-2019', 'Food', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-048', 'D13', '26-Nov-2019', 'Cash', 292);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-049', 'D20', '26-Nov-2019', 'Supply', NULL);							
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-050', 'D14', '30-Nov-2019', 'Supply',NULL);													
+
+
+											

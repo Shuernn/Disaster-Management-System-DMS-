@@ -1,0 +1,15 @@
+
+COLUMN Staff_ID FORMAT A14 HEADING 'Staff ID' ;
+COLUMN CountTask FORMAT 999 HEADING 'Count Task';
+
+BREAK ON staff_id ON name ON position SKIP 1;
+
+SELECT w.staff_id, name, position, count(t.task_id) AS CountTask
+FROM staff s, workload w, task t
+WHERE w.staff_id = s.staff_id AND t.task_id = w.task_id 
+GROUP BY  w.staff_id, name, position
+HAVING count(t.task_id) > 2
+ORDER BY w.staff_id;
+
+CLEAR BREAKS;
+CLEAR COLUMN;

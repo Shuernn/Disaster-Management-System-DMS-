@@ -1,0 +1,58 @@
+
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY';
+
+
+create table Staff (
+	Staff_ID VARCHAR(15) NOT NULL,
+	Name VARCHAR(30) NOT NULL,
+	Gender VARCHAR(15) NOT NULL,
+	DOB DATE,  
+	Position VARCHAR(15) NOT NULL,
+PRIMARY KEY (Staff_ID),
+constraint chk_staffgender check (UPPER(gender) in ('M','F'))
+);
+
+COLUMN Staff_ID FORMAT A12 HEADING 'Staff ID' ;
+COLUMN DOB FORMAT A12;
+
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S01', 'Sharlene Bunnell', 'F', '10-Sep-1991', 'Supervisor');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S02', 'Elfreda Burwell', 'F', '22-Mar-1995', 'Facilitator');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S03', 'Garrik Pryer', 'M', '03-Apr-1991', 'Facilitator');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S04', 'Gal Woolston', 'M', '05-May-1995', 'Paramedic');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S05', 'Jeana Drohan', 'F', '25-Oct-1998', 'Nurse');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S06', 'Dot Jacobowits', 'F', '30-Apr-2000', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S07', 'Antonin Spelwood', 'M', '22-Mar-1997', 'Facilitator');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S08', 'Beckie Roberti', 'F', '24-Feb-1990', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S09', 'Linn Flanagan', 'M', '19-Feb-1998', 'Facilitator');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S10', 'Osbourne Ruzek', 'M', '25-Nov-1993', 'Nurse');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S11', 'Clara MacConnel', 'F', '15-Sep-1992', 'Paramedic');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S12', 'Deana Jikylls', 'F', '27-Nov-1998', 'Nurse');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S13', 'Sibby Order', 'F', '12-Sep-2000', 'Security');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S14', 'Edouard Seater', 'M', '04-Mar-1997', 'Physicians');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S15', 'Andy Boyles', 'F', '08-Nov-1999', 'Security');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S16', 'Itch Ackenhead', 'M', '29-Jun-1993', 'Paramedic');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S17', 'Ulrika Edlington', 'F', '26-Dec-1998', 'Nurse');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S18', 'Randolf Riddock', 'M', '10-Aug-1999', 'Paramedic');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S19', 'Zechariah Trouncer', 'M', '01-Dec-1999', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S20', 'Emlynn Siggers', 'F', '06-Nov-1999', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S21', 'Robbie Lattos', 'F', '28-Jan-1995', 'Facilitator');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S22', 'Leoine Seivertsen', 'F', '26-Sep-1996', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S23', 'Irvine O''Donoghue', 'M', '17-Dec-1991', 'Physicians');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S24', 'Rosabella Sansam', 'F', '15-Apr-2000', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S25', 'Winni Ping', 'F', '12-Feb-1991', 'Physicians');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S26', 'Edythe Padmore', 'F', '31-Jul-1990', 'Nurse');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S27', 'Christean Metschke', 'F', '19-Jul-1998', 'Supervisor');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S28', 'Kaine Pinnock', 'M', '22-Mar-1997', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S29', 'Jeanna Giraudy', 'F', '08-Apr-1993', 'Security');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S30', 'Gail Juden', 'M', '21-Dec-1990', 'Physicians');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S31', 'Ernesto Coad', 'M', '11-Feb-1996', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S32', 'Tasha Gandrich', 'F', '20-Dec-1997', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S33', 'Mel Janssens', 'M', '19-Aug-2000', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S34', 'Stanford Catt', 'M', '29-Nov-1999', 'Security');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S35', 'Caritta Loftus', 'F', '03-Oct-1990', 'Physicians');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S36', 'Allix Vanstone', 'F', '24-Mar-1992', 'Supervisor');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S37', 'Karna Olver', 'F', '11-Dec-1998', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S38', 'Keefer Pezey', 'M', '20-May-2000', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S39', 'Wilhelmine Jermyn', 'F', '06-Feb-1995', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S40', 'Glori Groveham', 'F', '08-Dec-1996', 'Paramedic');
+

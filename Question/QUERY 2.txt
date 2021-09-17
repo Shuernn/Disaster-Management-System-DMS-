@@ -1,0 +1,18 @@
+COLUMN Shelter_ID FORMAT A10 HEADING 'Shelter ID' ;
+COLUMN FS_ID FORMAT A18 HEADING 'Food and Supply ID' ;
+COLUMN Item_Desc FORMAT A30 HEADING 'Item Desc' ;
+COLUMN Sent_Quantity HEADING 'Sent Quantity';
+COLUMN Expiry_Date FORMAT A12 HEADING 'Expire Date';
+
+ACCEPT s_id VARCHAR()
+ PROMPT 'Enter Shelter ID (SH-01 - SH-10):
+
+BREAK ON shelter_id ON item_desc SKIP 1 ON fs_id;
+
+SELECT s.shelter_id, f. fs_id, item_desc, sent_quantity, expiry_date
+FROM shelter s, food_and_supply_allocation fa, food_and_supply f
+WHERE s.shelter_id = fa.shelter_id AND fa.fs_id = f.fs_id AND expiry_date > sysdate AND s.shelter_id = '&s_id'
+ORDER BY s.shelter_id, f.fs_id, expiry_date;
+
+CLEAR BREAKS;
+CLEAR COLUMNS;

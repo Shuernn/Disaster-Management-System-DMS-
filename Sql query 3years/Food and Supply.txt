@@ -1,0 +1,90 @@
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD/Mon/YYYY';
+
+
+
+create table Food_and_Supply (
+	FS_ID VARCHAR(15) NOT NULL,
+	Item_Desc VARCHAR(30) NOT NULL,
+	Quantity_Stock NUMBER(6),
+	Expiry_Date DATE NULL,
+PRIMARY KEY (FS_ID)
+);
+
+COLUMN FS_ID FORMAT A18 HEADING 'Food and Supply ID' ;
+COLUMN Item_Desc FORMAT A30 HEADING 'Item Desc' ;
+COLUMN Quantity_Stock FORMAT 999 HEADING 'Quantity Stock' ;
+COLUMN Expiry_Date FORMAT A12 HEADING 'Expiry Date';
+
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS001', 'Toilet papers', 200, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS002', 'Clothes', 200, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS003', 'Towels', 150, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS004', 'Dental hygiene essentials', 160, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS005', 'Bath essentials', 150, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS006', 'First-aid items', 150, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS007', 'Pads and tampons', 200, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS008', 'Blankets', 170, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS009', 'Pillows', 170, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS010', 'Undergarments', 200, NULL);
+
+
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS014', 'Bread', 100, '14-Jul-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS015', 'Bread', 100, '30-Sep-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS016', 'Bread', 100, '18-Oct-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS017', 'Bread', 100, '13-Nov-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS018', 'Bread', 100, '08-Jan-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS019', 'Bread', 150, '27-Feb-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS020', 'Bread', 100, '22-Apr-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS021', 'Bread', 100, '27-Jun-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS022', 'Bread', 100, '10-Aug-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS023', 'Bread', 100, '04-Oct-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS024', 'Bread', 100, '12-Oct-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS025', 'Bread', 100, '02-Apr-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS026', 'Bread', 100, '06-Jun-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS027', 'Bread', 100, '13-Jul-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS028', 'Bread', 100, '21-Nov-2019');
+
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS033', 'Eggs', 50, '08-Aug-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS034', 'Eggs', 50, '24-Oct-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS035', 'Eggs', 50, '12-Nov-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS036', 'Eggs', 50, '02-Feb-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS037', 'Eggs', 50, '21-Mar-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS038', 'Eggs', 50, '16-May-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS039', 'Eggs', 50, '21-Jul-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS040', 'Eggs', 50, '04-Sep-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS041', 'Eggs', 50, '28-Oct-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS042', 'Eggs', 50, '27-Apr-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS043', 'Eggs', 50, '01-Jul-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS044', 'Eggs', 50, '07-Aug-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS045', 'Eggs', 50, '19-Aug-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS046', 'Eggs', 50, '07-Sep-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS047', 'Eggs', 50, '15-Dec-2019');
+
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS029', 'Rice bag (10kg)', 20, '08-Jul-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS030', 'Rice bag (10kg)', 50, '06-Aug-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS031', 'Rice bag (10kg)', 50, '31-May-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS032', 'Rice bag (10kg)', 50, '10-Nov-2020');
+
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS011', 'Canned food', 100, '25-Dec-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS012', 'Canned food', 80, '25-Dec-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS013', 'Canned food', 100, '25-Nov-2021');
+
+
+
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS057', 'Instant noodles', 100, '23-Oct-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS060', 'Instant noodles', 150, '23-Dec-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS058', 'Instant noodles', 80, '23-Jul-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS059', 'Instant noodles', 50, '31-Dec-2019');
+
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS048', 'Cereal', 80, '10-Oct-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS050', 'Cereal', 100, '10-Nov-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS049', 'Cereal', 100, '10-Oct-2019');
+
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS053', 'Biscuits', 100, '31-Aug-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS052', 'Biscuits', 60, '12-Mar-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS051', 'Biscuits', 80, '15-Aug-2018');
+
+
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS056', 'Drinks', 120, '25-Dec-2020')
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS054', 'Drinks', 200, '25-Dec-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS056', 'Drinks', 200, '25-Dec-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS055', 'Drinks', 200, '25-Dec-2019'); 

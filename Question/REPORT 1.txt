@@ -1,0 +1,31 @@
+
+PROMPT 'Check for the number of task that had been done in 2017 at selected shelter';
+
+ACCEPT shelter_id PROMPT 'Enter shelter id (SH-01 to SH-10):';
+
+COLUMN Shelter_ID FORMAT A10 HEADING 'Shelter ID' ;
+COLUMN Task_ID FORMAT A12 HEADING 'Task ID';
+COLUMN Task_Desc FORMAT A34 HEADING 'Task Desc';
+
+TTITLE LEFT =============================== SKIP 1 -
+LEFT  _DATE SKIP 1-
+LEFT =============================== SKIP 1-
+LEFT 'Shelter Details' SKIP 2 -
+       LEFT 'Task handled at ' '&shelter_id' ' in 2017 'SKIP 1 -
+LEFT 'Page:' FORMAT 999 SQL.PNO SKIP ;
+
+
+BREAK ON shelter_id SKIP PAGE  ON task_desc SKIP 1;
+COMPUTE COUNT LABEL 'Total' OF task_id ON shelter_id;
+
+SELECT s.shelter_id, t.task_id, task_desc, taskdate
+FROM workload w, task t, shelter s
+WHERE w.shelter_id = s.shelter_id AND w.task_id = t.task_id AND taskdate BETWEEN '01/Jan/2017' AND '31/Dec/2017' AND s.shelter_id = '&shelter_id'
+ORDER  BY shelter_id, task_id;
+
+CLEAR BREAKS;
+CLEAR COLUMN;
+CLEAR COMPUTE;
+TTITLE OFF;
+
+

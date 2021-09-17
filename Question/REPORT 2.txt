@@ -1,0 +1,37 @@
+
+
+TTITLE LEFT  ================================== SKIP 1 -
+LEFT  _DATE SKIP 1-
+LEFT  ================================== SKIP 1-
+LEFT 'Donation Details' SKIP 1 -
+       LEFT 'Type of donation: Supply' SKIP 0 -
+LEFT 'Page:' FORMAT 999 SQL.PNO SKIP2;
+
+COLUMN Donation_No FORMAT A12 HEADING 'Donation No' ;
+COLUMN Donation_Date FORMAT A14 HEADING 'Donation Date';
+COLUMN FS_ID FORMAT A18 HEADING 'Food and Supply ID' ;
+COLUMN Item_Desc FORMAT A30 HEADING 'Item Desc' ;
+COLUMN Quantity FORMAT 999 HEADING 'Quantity';
+COLUMN Donor_ID FORMAT A12 HEADING 'Donor ID' ;
+
+ACCEPT D_Year INT 
+PROMPT 'Please enter a year(2016 - 2019): ';
+
+
+BREAK ON donor_id ON donation_no SKIP PAGE ON name ON donation_date;
+COMPUTE COUNT LABEL 'Total Item' OF item_desc ON donation_no;
+COMPUTE SUM LABEL 'Total' OF quantity ON donation_no;
+
+
+
+
+SELECT do.donor_id, name, d.donation_no, donation_date, di.fs_id, item_desc, quantity
+FROM food_and_supply f, donation d, donation_item di, donor do
+WHERE di.donation_no=d.donation_no AND d.donor_id = do.donor_id AND di.fs_id = f.fs_id AND donation_type = 'Supply' 
+AND donation_date BETWEEN '01/Jan/&D_Year' AND '31/Dec/&D_Year' 
+order by d.donation_no, di.fs_id;
+
+CLEAR BREAKS;
+CLEAR COMPUTE;
+CLEAR COLUMNS;
+TTITLE OFF

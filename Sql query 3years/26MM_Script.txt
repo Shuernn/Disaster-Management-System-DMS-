@@ -1,0 +1,1339 @@
+set linesize 300;
+set pagesize 300;
+
+
+DROP TABLE Food_and_Supply_Allocation;
+DROP TABLE Shelter_Allocation;
+DROP TABLE Medical_Examination;
+DROP TABLE Workload;
+DROP TABLE Donation_Item;
+DROP TABLE Donation;
+DROP TABLE Shelter;
+DROP TABLE Disaster;
+DROP TABLE Victim;
+DROP TABLE Staff;
+DROP TABLE Task;
+DROP TABLE Donor;
+DROP TABLE Food_and_Supply;
+
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MON/YYYY';
+
+
+COLUMN Shelter_ID FORMAT A10 HEADING 'Shelter ID' ;
+COLUMN Tel_No HEADING 'Tel No';
+
+COLUMN Disaster_ID FORMAT A12 HEADING 'Disaster ID' ;
+COLUMN Disaster_Type FORMAT A16 HEADING 'Disaster Type';
+COLUMN Disaster_Level FORMAT 9 HEADING 'Disaster Level';
+COLUMN Disaster_Date FORMAT A14 HEADING 'Disaster Date';
+
+COLUMN Victim_ID FORMAT A12 HEADING 'Victim ID' ;
+COLUMN Victim_Name HEADING 'Victim Name';
+COLUMN Tel_No HEADING 'Tel No';
+
+COLUMN Staff_ID FORMAT A14 HEADING 'Staff ID' ;
+COLUMN DOB FORMAT A12;
+
+COLUMN Task_ID FORMAT A12 HEADING 'Task ID';
+COLUMN Task_Category FORMAT A14 HEADING 'Task Category';
+COLUMN Task_Desc FORMAT A34 HEADING 'Task Desc';
+
+COLUMN Donor_ID FORMAT A12 HEADING 'Donor ID' ;
+COLUMN Tel_No HEADING 'Tel No';
+
+COLUMN Donation_No FORMAT A12 HEADING 'Donation No' ;
+COLUMN Donation_Date FORMAT A14 HEADING 'Donation Date';
+COLUMN Donation_Type FORMAT A14 HEADING 'Donation Type';
+COLUMN Amount FORMAT $9999.99 HEADING 'Amount (RM)';
+COLUMN FS_ID FORMAT A18 HEADING 'Food and Supply ID' ;
+
+COLUMN Item_Desc FORMAT A30 HEADING 'Item Desc' ;
+COLUMN Quantity_Stock FORMAT 999 HEADING 'Quantity Stock' ;
+COLUMN Expiry_Date FORMAT A12 HEADING 'Expire Date';
+
+COLUMN Enrol_Date FORMAT A14 HEADING 'Enrol Date';
+
+COLUMN Receive_Date FORMAT A12 HEADING 'Receive Date' ;
+COLUMN Send_Date HEADING 'Send Date';
+COLUMN Sent_Quantity HEADING 'Sent Quantity';
+
+COLUMN Examined_Date FORMAT A14 HEADING 'Examined Date' ;
+
+COLUMN FS_ID FORMAT A18 HEADING 'Food and Supply ID' ;
+COLUMN Quantity FORMAT 999 HEADING 'Quantity';
+
+
+create table Shelter (
+	Shelter_ID VARCHAR(10) NOT NULL,
+	Address VARCHAR(50) NOT NULL,
+	Tel_No VARCHAR(20),
+	Capacity INT NOT NULL,
+PRIMARY KEY (Shelter_ID)
+);
+
+create table Disaster (
+	Disaster_ID VARCHAR(20) NOT NULL,
+	Location VARCHAR(50) NOT NULL,
+	Disaster_Type VARCHAR(30) NOT NULL,
+	Disaster_Level INT NOT NULL,
+	Disaster_Date DATE NOT NULL,
+PRIMARY KEY(Disaster_ID)
+);
+
+create table Victim (
+	Victim_ID VARCHAR(15) NOT NULL,
+	Victim_Name VARCHAR(30) NOT NULL,
+	Gender VARCHAR(15) NOT NULL,
+	Tel_No VARCHAR(25),
+	Address VARCHAR(50) NOT NULL,
+PRIMARY KEY(Victim_ID),
+CONSTRAINT chk_gender check (UPPER(gender) IN ('M', 'F'))
+);
+
+create table Staff (
+	Staff_ID VARCHAR(15) NOT NULL,
+	Name VARCHAR(30) NOT NULL,
+	Gender VARCHAR(15) NOT NULL,
+	DOB DATE,  
+	Position VARCHAR(15) NOT NULL,
+PRIMARY KEY (Staff_ID),
+constraint chk_staffgender check (UPPER(gender) in ('M','F'))
+);
+
+create table Task (
+	Task_ID VARCHAR(5) NOT NULL,
+	Task_Category VARCHAR(15),
+	Task_Desc VARCHAR(40),
+PRIMARY KEY (Task_ID)
+);
+
+create table Food_and_Supply (
+	FS_ID VARCHAR(15) NOT NULL,
+	Item_Desc VARCHAR(30) NOT NULL,
+	Quantity_Stock INT,
+	Expiry_Date DATE NULL,
+PRIMARY KEY (FS_ID)
+);
+
+create table Donor (
+	Donor_ID VARCHAR(10) NOT NULL,
+	Name VARCHAR(25) NOT NULL,
+	Gender VARCHAR(10),
+	Tel_No VARCHAR(25),
+	Address VARCHAR(25),
+PRIMARY KEY (Donor_ID)
+);
+
+create table Donation (
+	Donation_No VARCHAR(10) NOT NULL,
+	Donor_ID VARCHAR(10) NOT NULL,
+	Donation_Date DATE NOT NULL,
+	Donation_Type VARCHAR(10) NOT NULL,
+	Amount INT,
+PRIMARY KEY(Donation_No),
+FOREIGN KEY (Donor_ID) REFERENCES DONOR(Donor_ID),
+CONSTRAINT chk_Donation_Type check (Donation_type IN ('Food', 'Supply', 'Cash'))
+);
+
+create table Shelter_Allocation (
+	Shelter_ID VARCHAR(10) NOT NULL,
+	Victim_ID VARCHAR(15) NOT NULL,
+	Enrol_Date DATE,
+	Disaster_ID VARCHAR(20) NOT NULL,
+PRIMARY KEY (Shelter_ID, Victim_ID, Enrol_Date),
+FOREIGN KEY (Shelter_ID) REFERENCES Shelter(Shelter_ID),
+FOREIGN KEY (Victim_ID) REFERENCES Victim(Victim_ID),
+FOREIGN KEY (Disaster_ID) REFERENCES Disaster(Disaster_ID)
+);
+
+create table FOOD_AND_SUPPLY_ALLOCATION (
+	FS_ID VARCHAR(15) NOT NULL,
+	Shelter_ID VARCHAR(10) NOT NULL,
+	Receive_Date DATE,
+	Send_Date DATE,
+	Sent_Quantity INT,
+PRIMARY KEY(FS_ID, Shelter_ID, Receive_Date),
+FOREIGN KEY (FS_ID) REFERENCES Food_and_Supply(FS_ID),
+FOREIGN KEY (Shelter_ID) REFERENCES Shelter(Shelter_ID)
+);
+
+create table Medical_Examination (
+	Staff_ID VARCHAR(15) NOT NULL,
+	Victim_ID VARCHAR(15) NOT NULL,
+	Examined_Date DATE,
+	Status VARCHAR(8),
+	Sickness VARCHAR(27),
+PRIMARY KEY (Staff_ID, Victim_ID, Examined_Date),
+FOREIGN KEY (Staff_ID) REFERENCES Staff(Staff_ID),
+FOREIGN KEY (Victim_ID) REFERENCES Victim(Victim_ID)
+);
+
+create table Donation_Item (
+	Donation_No VARCHAR(10) NOT NULL,
+	FS_ID VARCHAR(15) NOT NULL,
+	Quantity INT,
+PRIMARY KEY (Donation_No, FS_ID),
+FOREIGN KEY (Donation_No) REFERENCES Donation(Donation_No),
+FOREIGN KEY (FS_ID) REFERENCES Food_and_Supply(FS_ID)
+);
+
+create table Workload (
+	Staff_ID VARCHAR(15) NOT NULL,
+	Task_ID VARCHAR(5) NOT NULL,
+	TaskDate DATE,
+	Shelter_ID VARCHAR(10) NOT NULL,
+	StartTime VARCHAR(50) NOT NULL,
+	EndTime VARCHAR(50),
+PRIMARY KEY (Staff_ID, Task_ID, TaskDate),
+FOREIGN KEY (Staff_ID) REFERENCES Staff(Staff_ID),
+FOREIGN KEY (Task_ID) REFERENCES Task(Task_ID),
+FOREIGN KEY (Shelter_ID) REFERENCES Shelter(Shelter_ID)
+);
+
+
+
+
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-01', '35 Havey Plaza', '930-973-8396', 28);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-02', '0669 Clemons Terrace', '900-675-1517', 46);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-03', '7 Porter Park', '102-808-6487', 78);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-04', '303 Truax Way', '823-955-2107', 36);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-05', '3 Clove Junction', '653-228-7994', 75);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-06', '3299 Fordem Center', '859-311-5304', 29);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-07', '9598 Shasta Lane', '734-304-2672', 32);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-08', '6 Northport Alley', '650-591-9205', 29);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-09', '07950 Brickson Park Plaza', '879-604-6510', 55);
+insert into Shelter (Shelter_ID, Address, Tel_No, Capacity) values ('SH-10', '4 Lotheville Crossing', '750-548-0453', 26);
+
+
+
+
+
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-01', '2 Old Gate Hill', 'Cyclonic Storms', 5, '19-Dec-2016');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-02', '8717 Truax Street', 'Floods', 5, '13-Apr-2017');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-03', '2695 Redwing Lane', 'Cyclonic Storms', 1, '09-Jun-2017');					
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-04', '5 Forest Run Point', 'Forest Fires', 3, '15-Jul-2017');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-05', '97 Sage Alley', 'Forest Fires', 3, '04-Sep-2017');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-06', '87662 Shasta Circle', 'Landslides', 4, '05-Oct-2017');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-07', '5462 Dottie Park', 'Forest Fires', 1, '20-Dec-2017');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-08', '275 Lunder Alley', 'Floods', 4, '09-Jan-2018');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-09', '9963 Ruskin Hill', 'Earthquake', 2, '12-Mar-2018');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-10', '2 Summerview Pass', 'Floods', 5, '08-Apr-2018');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-11', '5 Troy Terrace', 'Earthquake', 5, '09-Jul-2018');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-12', '2775 Brickson Park Alley', 'Cyclonic Storms', 5, '07-Oct-2018');					
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-13', '2 Walton Way', 'Floods', 2, '27-Dec-2018');							
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-14', '889 Corscot Lane', 'Haze', 2, '06-Feb-2019');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-15', '296 Carioca Plaza', 'Floods', 2, '02-Mar-2019');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-16', '53 Harbort Center', 'Floods', 3, '26-Mar-2019');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-17', '2377 Warbler Road', 'Floods', 3, '05-Apr-2019');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-18', '4447 Dennis Trail', 'Haze', 4, '03-May-2019');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-19', '050 Gulseth Drive', 'Landslides', 2, '04-Jun-2019');						
+insert into Disaster (Disaster_ID, Location, Disaster_Type, Disaster_Level, Disaster_Date) values ('DS-20', '4 Homewood Trail', 'Landslides', 3, '02-Oct-2019');
+
+
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-001', 'Abie Olrenshaw', 'M', '907-418-1437', '1461 Westend Lane');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-002', 'Jock Daudray', 'M', '723-720-0375', '980 Elgar Lane');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-003', 'Terri Cockran', 'M', '579-250-6144', '1 Packers Crossing');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-004', 'Agosto Ughi', 'M', '704-898-0351', '23847 Rutledge Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-005', 'Pepito Shimon', 'M', '857-578-8011', '72293 Scofield Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-006', 'Dave Bohden', 'M', '622-277-3729', '961 Porter Alley');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-007', 'Julio Gildersleeve', 'M', '296-490-5434', '7 Ronald Regan Avenue');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-008', 'Datha Dartan', 'F', '658-780-0730', '1 Bluejay Plaza');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-009', 'Kearney Cameron', 'M', '436-829-0168', '9689 Waywood Pass');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-010', 'Leonhard Groom', 'M', '365-784-7811', '782 Little Fleur Parkway');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-011', 'Rossie Taberer', 'M', '464-288-1490', '8907 5th Center');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-012', 'Roxanne Doohan', 'F', '976-176-5219', '37334 Cascade Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-013', 'Regan Gantlett', 'F', '209-800-4501', '32 Kipling Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-014', 'Yehudi Outibridge', 'M', '696-599-4936', '720 Transport Road');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-015', 'Gawen Aylwin', 'M', '252-116-8553', '7 High Crossing Road');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-016', 'Nichols O''Luby', 'M', '598-482-5982', '7 Erie Road');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-017', 'Jonah Bartolomeu', 'M', '715-655-9411', '5882 Continental Alley');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-018', 'Sallee Colnett', 'F', '945-321-2341', '8 Loomis Drive');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-019', 'Carolina Reide', 'F', '905-401-3727', '41 Sullivan Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-020', 'Stanly Treagus', 'M', '324-934-7380', '989 Summit Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-021', 'Blake Hassekl', 'M', '701-242-4765', '7063 Kings Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-022', 'Darrick Moubray', 'M', '950-498-2145', '838 Colorado Pass');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-023', 'Tabby Bartolacci', 'F', '977-426-8789', '93 Welch Way');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-024', 'Francis Camois', 'M', '692-621-5523', '18 Victoria Place');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-025', 'Ganny Kemetz', 'M', '223-530-2976', '051 3rd Drive');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-026', 'Rycca Corsar', 'F', '836-409-6284', '3415 Marcy Hill');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-027', 'Eveline Bruneton', 'F', '678-566-3108', '577 Lighthouse Bay Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-028', 'Ruddie Trigg', 'M', '617-122-2631', '03 Jackson Road');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-029', 'Jamal Croxton', 'M', '790-120-5929', '5 American Junction');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-030', 'Giordano Baudinet', 'M', '347-853-3065', '148 Kings Lane');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-031', 'Miran Bachshell', 'F', '352-999-3806', '77781 Stang Point');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-032', 'Margarete Turford', 'F', '807-934-3311', '17 North Street');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-033', 'Alisha Veness', 'F', '254-558-5695', '268 Dennis Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-034', 'Mikel Padefield', 'M', '327-466-6226', '85 Beilfuss Parkway');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-035', 'Erda Gittins', 'F', '605-261-4937', '5 Londonderry Hill');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-036', 'Bianka Scane', 'F', '956-285-1288', '0 Jay Street');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-037', 'Florenza Alesin', 'F', '307-874-1032', '247 Forest Run Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-038', 'Erda Branston', 'F', '803-491-0567', '361 Sloan Place');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-039', 'Pippo Putland', 'M', '316-645-5878', '7736 Troy Hill');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-040', 'Ardisj Verma', 'F', '905-910-0938', '0 Comanche Lane');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-041', 'Kathi Dunnan', 'F', '429-579-9656', '9 Pankratz Place');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-042', 'Merwyn Jencken', 'M', '683-685-1403', '924 Montana Terrace');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-043', 'Manuel Tregoning', 'M', '396-480-1063', '05 Harper Park');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-044', 'Enrica Ezele', 'F', '841-441-9895', '1 Claremont Court');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-045', 'Sandro Suermeiers', 'M', '850-194-5853', '3 Logan Pass');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-046', 'Teddi Ethelstone', 'F', '791-330-7609', '6180 Mayfield Lane');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-047', 'Barr Kelby', 'M', '574-510-2716', '442 Harbort Court');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-048', 'Elvis Cottesford', 'M', '736-904-6672', '4 Muir Place');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-049', 'Willdon Liccardi', 'M', '982-703-3024', '78 Bellgrove Way');
+insert into Victim (Victim_ID, Victim_Name, Gender, Tel_No, Address) values ('V-050', 'Rurik McWilliams', 'M', '836-419-1772', '0 Buell Point');
+
+
+
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S01', 'Sharlene Bunnell', 'F', '10-Sep-1991', 'Supervisor');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S02', 'Elfreda Burwell', 'F', '22-Mar-1995', 'Facilitator');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S03', 'Garrik Pryer', 'M', '03-Apr-1991', 'Facilitator');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S04', 'Gal Woolston', 'M', '05-May-1995', 'Paramedic');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S05', 'Jeana Drohan', 'F', '25-Oct-1998', 'Nurse');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S06', 'Dot Jacobowits', 'F', '30-Apr-2000', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S07', 'Antonin Spelwood', 'M', '22-Mar-1997', 'Facilitator');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S08', 'Beckie Roberti', 'F', '24-Feb-1990', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S09', 'Linn Flanagan', 'M', '19-Feb-1998', 'Facilitator');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S10', 'Osbourne Ruzek', 'M', '25-Nov-1993', 'Nurse');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S11', 'Clara MacConnel', 'F', '15-Sep-1992', 'Paramedic');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S12', 'Deana Jikylls', 'F', '27-Nov-1998', 'Nurse');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S13', 'Sibby Order', 'F', '12-Sep-2000', 'Security');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S14', 'Edouard Seater', 'M', '04-Mar-1997', 'Physicians');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S15', 'Andy Boyles', 'F', '08-Nov-1999', 'Security');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S16', 'Itch Ackenhead', 'M', '29-Jun-1993', 'Paramedic');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S17', 'Ulrika Edlington', 'F', '26-Dec-1998', 'Nurse');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S18', 'Randolf Riddock', 'M', '10-Aug-1999', 'Paramedic');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S19', 'Zechariah Trouncer', 'M', '01-Dec-1999', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S20', 'Emlynn Siggers', 'F', '06-Nov-1999', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S21', 'Robbie Lattos', 'F', '28-Jan-1995', 'Facilitator');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S22', 'Leoine Seivertsen', 'F', '26-Sep-1996', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S23', 'Irvine O''Donoghue', 'M', '17-Dec-1991', 'Physicians');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S24', 'Rosabella Sansam', 'F', '15-Apr-2000', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S25', 'Winni Ping', 'F', '12-Feb-1991', 'Physicians');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S26', 'Edythe Padmore', 'F', '31-Jul-1990', 'Nurse');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S27', 'Christean Metschke', 'F', '19-Jul-1998', 'Supervisor');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S28', 'Kaine Pinnock', 'M', '22-Mar-1997', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S29', 'Jeanna Giraudy', 'F', '08-Apr-1993', 'Security');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S30', 'Gail Juden', 'M', '21-Dec-1990', 'Physicians');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S31', 'Ernesto Coad', 'M', '11-Feb-1996', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S32', 'Tasha Gandrich', 'F', '20-Dec-1997', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S33', 'Mel Janssens', 'M', '19-Aug-2000', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S34', 'Stanford Catt', 'M', '29-Nov-1999', 'Security');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S35', 'Caritta Loftus', 'F', '03-Oct-1990', 'Physicians');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S36', 'Allix Vanstone', 'F', '24-Mar-1992', 'Supervisor');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S37', 'Karna Olver', 'F', '11-Dec-1998', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S38', 'Keefer Pezey', 'M', '20-May-2000', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S39', 'Wilhelmine Jermyn', 'F', '06-Feb-1995', 'Staff Member');
+insert into Staff (Staff_ID, Name, Gender, DOB, Position) values ('S40', 'Glori Groveham', 'F', '08-Dec-1996', 'Paramedic');
+
+
+
+
+
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T01', 'CLEANING', 'CLEAN SHELTER HALL');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T02', 'CLEANING', 'CLEAN SHELTER RESTROOMS');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T03', 'SECURITY', 'DAY PATROL');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T04', 'SECURITY', 'NIGHT PATROL');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T05', 'DONATION', 'DONATION REGISTRATION');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T06', 'DONATION', 'DONATION ALLOCATION');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T07', 'DONATION', 'ACCOUNTS');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T08', 'FOOD_SUPPLY', 'DISTRIBUTE FOOD');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T09', 'FOOD_SUPPLY', 'DISTRIBUTE DAILY SUPPLIES');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T10', 'FOOD_SUPPLY', 'DISTRIBUTE WOMENS SUPPLIES');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T11', 'FOOD_SUPPLY', 'STOCK COUNT');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T12', 'LOGISTICS', 'VICTIM REGISTRATION');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T13', 'LOGISTICS', 'VICTIM CARE');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T14', 'LOGISTICS', 'CHILD CARE');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T15', 'LOGISTICS', 'VICTIM FACILITATING');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T16', 'MEDICAL', 'PROVIDE FIRST AID TREATMENT');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T17', 'MEDICAL', 'ASSESS VICTIM CONDITION');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T18', 'MEDICAL', 'STANDBY FOR EMERGENCY');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T19', 'MEDICAL', 'MEDICAL CHECKUP');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T20', 'MEDICAL', 'ASSIST PARAMEDICS AND PHYSICIANS');
+
+
+
+
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS001', 'Toilet papers', 200, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS002', 'Clothes', 200, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS003', 'Towels', 150, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS004', 'Dental hygiene essentials', 160, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS005', 'Bath essentials', 150, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS006', 'First-aid items', 150, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS007', 'Pads and tampons', 200, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS008', 'Blankets', 170, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS009', 'Pillows', 170, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS010', 'Undergarments', 200, NULL);
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS014', 'Bread', 100, '14-Jul-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS015', 'Bread', 100, '30-Sep-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS016', 'Bread', 100, '18-Oct-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS017', 'Bread', 100, '13-Nov-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS018', 'Bread', 100, '08-Jan-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS019', 'Bread', 150, '27-Feb-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS020', 'Bread', 100, '22-Apr-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS021', 'Bread', 100, '27-Jun-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS022', 'Bread', 100, '10-Aug-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS023', 'Bread', 100, '04-Oct-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS024', 'Bread', 100, '12-Oct-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS025', 'Bread', 100, '02-Apr-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS026', 'Bread', 100, '06-Jun-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS027', 'Bread', 100, '13-Jul-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS028', 'Bread', 100, '21-Nov-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS033', 'Eggs', 50, '08-Aug-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS034', 'Eggs', 50, '24-Oct-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS035', 'Eggs', 50, '12-Nov-2017');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS036', 'Eggs', 50, '02-Feb-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS037', 'Eggs', 50, '21-Mar-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS038', 'Eggs', 50, '16-May-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS039', 'Eggs', 50, '21-Jul-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS040', 'Eggs', 50, '04-Sep-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS041', 'Eggs', 50, '28-Oct-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS042', 'Eggs', 50, '27-Apr-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS043', 'Eggs', 50, '01-Jul-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS044', 'Eggs', 50, '07-Aug-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS045', 'Eggs', 50, '19-Aug-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS046', 'Eggs', 50, '07-Sep-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS047', 'Eggs', 50, '15-Dec-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS029', 'Rice bag (10kg)', 20, '08-Jul-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS030', 'Rice bag (10kg)', 50, '06-Aug-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS031', 'Rice bag (10kg)', 50, '31-May-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS032', 'Rice bag (10kg)', 50, '10-Nov-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS011', 'Canned food', 100, '25-Dec-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS012', 'Canned food', 80, '25-Dec-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS013', 'Canned food', 100, '25-Nov-2021');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS057', 'Instant noodles', 100, '23-Oct-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS060', 'Instant noodles', 150, '23-Dec-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS058', 'Instant noodles', 80, '23-Jul-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS059', 'Instant noodles', 50, '31-Dec-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS048', 'Cereal', 80, '10-Oct-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS050', 'Cereal', 100, '10-Nov-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS049', 'Cereal', 100, '10-Oct-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS053', 'Biscuits', 100, '31-Aug-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS052', 'Biscuits', 60, '12-Mar-2019');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS051', 'Biscuits', 80, '15-Aug-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS054', 'Drinks', 200, '25-Dec-2018');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS056', 'Drinks', 120, '25-Dec-2020');
+insert into Food_and_Supply (FS_ID, Item_Desc, Quantity_Stock, Expiry_Date) values ('FS055', 'Drinks', 200, '25-Dec-2019'); 
+
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D01', 'Gael Nevet', 'M', '901-505-6934', '5228 Manley Lane');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D02', 'Nevins Cramer', 'M', '102-485-0381', '4 Sullivan Hill');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D03', 'Paola Langstrath', 'F', '636-450-9825', '799 Trailsway Pass');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D04', 'Irma Wantling', 'F', '266-292-1656', '5097 Mallory Road');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D05', 'Alina Carreck', 'F', '895-710-9381', '645 Birchwood Court');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D06', 'Arri Goodswen', 'M', '657-509-3965', '96578 David Terrace');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D07', 'Nerta Fadian', 'F', '673-514-3348', '537 Fulton Way');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D08', 'Darill Philippault', 'M', '336-981-5280', '1547 Fulton Court');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D09', 'Maryrose Swannell', 'F', '322-814-8457', '6 Tony Road');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D10', 'Lanni Whines', 'F', '993-974-8721', '72 Union Terrace');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D11', 'Richmond Wiszniewski', 'M', '999-984-1290', '40873 Corscot Junction');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D12', 'Jerry Maddick', 'M', '206-319-5310', '08095 Anzinger Avenue');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D13', 'Rolfe Braim', 'M', '663-672-2977', '677 Kennedy Way');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D14', 'Maison Atheis', 'M', '449-450-9499', '44957 Carioca Hill');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D15', 'Coraline Acutt', 'F', '350-531-2636', '67 Emmet Avenue');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D16', 'Ban Maling', 'M', '162-545-1880', '0 Bayside Way');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D17', 'Lina Beckhouse', 'F', '912-264-5296', '42800 Hollow Ridge Avenue');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D18', 'Teresa Gemmell', 'F', '940-373-9000', '532 Anzinger Junction');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D19', 'Miner Towndrow', 'M', '905-972-8178', '8 Utah Street');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D20', 'Betti Becket', 'F', '417-589-3129', '91472 Browning Center');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D21', 'Erl Extance', 'M', '165-856-3805', '7 Vernon Crossing');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D22', 'Rinaldo Segebrecht', 'M', '213-197-1670', '732 Corben Trail');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D23', 'Evaleen Stilliard', 'F', '312-100-3000', '06 Anzinger Road');
+insert into DONOR (Donor_ID, Name, Gender, Tel_No, Address) values ('D24', 'Pip Deaville', 'M', '681-769-0587', '816 Brickson Park Lane');
+insert into Donor (Donor_ID, Name, Gender, Tel_No, Address) values ('D25', 'Gabriele Iddy', 'M', '588-655-3478', '96968 Ohio Crossing');
+insert into Donor (Donor_ID, Name, Gender, Tel_No, Address) values ('D26', 'Lorilee Sturgess', 'F', '716-110-1675', '00786 Rieder Court');
+insert into Donor (Donor_ID, Name, Gender, Tel_No, Address) values ('D27', 'Margaux Broadbere', 'F', '671-767-3075', '793 Schurz Plaza');
+insert into Donor (Donor_ID, Name, Gender, Tel_No, Address) values ('D28', 'Sergent Klainer', 'M', '606-250-3525', '5 Farragut Point');
+insert into Donor (Donor_ID, Name, Gender, Tel_No, Address) values ('D29', 'Malachi Villar', 'M', '638-793-1737', '958 Badeau Junction');
+insert into Donor (Donor_ID, Name, Gender, Tel_No, Address) values ('D30', 'Decca Silverson', 'M', '459-551-5084', '9569 Fuller Pass');
+
+
+
+
+
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-001', 'D08', '20-Dec-2016', 'Cash', 232);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-002', 'D26', '31-Dec-2016', 'Supply', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-003', 'D01', '16-Jan-2017', 'Cash', 172);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-004', 'D09', '26-Jan-2017', 'Supply', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-005', 'D24', '06-Mar-2017', 'Supply', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-006', 'D16', '03-May-2017', 'Supply', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-007', 'D29', '08-Jul-2017', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-008', 'D02', '24-Sep-2017', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-009', 'D11', '22-Oct-2017', 'Cash', 26);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-010', 'D21', '12-Oct-2017', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-011', 'D02', '07-Aug-2017', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-012', 'D14', '02-Jan-2018', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-013', 'D18', '21-Feb-2018', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-014', 'D10', '16-Apr-2018', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-015', 'D27', '21-Jun-2018', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-016', 'D15', '09-Jun-2018', 'Cash', 71);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-017', 'D04', '04-Aug-2018', 'Food', NULL);					
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-018', 'D19', '08-Aug-2018', 'Cash', 498);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-019', 'D10', '28-Sep-2018', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-020', 'D01', '06-Oct-2018', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-021', 'D28', '25-Dec-2018', 'Supply', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-022', 'D14', '27-Jan-2019', 'Cash', 270);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-023', 'D28', '27-Mar-2019', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-024', 'D23', '21-May-2019', 'Cash', 240);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-025', 'D12', '28-May-2019', 'Supply', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-026', 'D29', '31-May-2019', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-027', 'D15', '31-May-2019', 'Cash', 322);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-028', 'D17', '06-Jun-2019', 'Cash', 225);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-029', 'D25', '12-Jun-2019', 'Supply', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-030', 'D23', '24-Jun-2019', 'Cash', 383);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-031', 'D05', '26-Jun-2019', 'Cash', 331);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-032', 'D20', '07-Jul-2019', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-033', 'D26', '17-Jul-2019', 'Cash', 9);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-034', 'D18', '18-Jul-2019', 'Cash', 191);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-035', 'D19', '19-Jul-2019', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-036', 'D22', '28-Jul-2019', 'Supply', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-037', 'D07', '05-Aug-2019', 'Cash', 94);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-038', 'D03', '07-Aug-2019', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-039', 'D24', '18-Aug-2019', 'Cash', 134);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-040', 'D28', '29-Aug-2019', 'Cash', 411);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-041', 'D30', '09-Sep-2019', 'Supply', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-042', 'D16', '09-Sep-2019', 'Cash', 394);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-043', 'D12', '17-Sep-2019', 'Cash', 38);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-044', 'D06', '21-Sep-2019', 'Supply', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-045', 'D25', '30-Oct-2019', 'Cash', 91);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-046', 'D10', '15-Nov-2019', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-047', 'D16', '17-Nov-2019', 'Food', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-048', 'D13', '26-Nov-2019', 'Cash', 292);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-049', 'D20', '26-Nov-2019', 'Supply', NULL);						
+insert into Donation (Donation_No, Donor_ID, Donation_Date, Donation_Type, Amount) values ('DN-050', 'D14', '30-Nov-2019', 'Supply',NULL);						
+
+
+
+
+
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-010', '19-Dec-2016', 'DS-01');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-039', '19-Dec-2016', 'DS-01');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-011', '19-Dec-2016', 'DS-01');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-048', '22-Dec-2016', 'DS-01');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-017', '24-Dec-2016','DS-01');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-040', '27-Jan-2017', 'DS-01');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-003', '28-Jan-2017', 'DS-01');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-020', '17-Feb-2017', 'DS-01');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-022', '17-Feb-2017', 'DS-01');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-036', '20-Mar-2017', 'DS-01');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-029', '13-Apr-2017', 'DS-02');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-007', '13-Apr-2017', 'DS-02');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-038', '14-Apr-2017', 'DS-02');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-041', '15-Apr-2017', 'DS-02');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-018', '24-Apr-2017', 'DS-02');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-027', '07-May-2017','DS-02');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-007', '30-May-2017', 'DS-02');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-015', '31-May-2017', 'DS-02');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-048', '09-Jun-2017', 'DS-03');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-029', '09-Jun-2017', 'DS-03');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-011', '10-Jun-2017', 'DS-03');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-035', '15-Jul-2017', 'DS-04');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-016', '15-Jul-2017', 'DS-04');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-049', '20-Aug-2017', 'DS-04');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-006', '22-Aug-2017', 'DS-04');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-030', '24-Aug-2017', 'DS-04');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-017', '28-Aug-2017', 'DS-04');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-015', '04-Sep-2017','DS-05');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-045', '04-Sep-2017', 'DS-05');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-042', '04-Sep-2017', 'DS-05');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-002', '04-Sep-2017', 'DS-05');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-033', '05-Oct-2017', 'DS-06');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-007', '05-Oct-2017', 'DS-06');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-043', '05-Oct-2017', 'DS-06');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-021', '02-Nov-2017', 'DS-06');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-022', '02-Nov-2017', 'DS-06');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-050', '04-Dec-2017', 'DS-06');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-022', '13-Dec-2017', 'DS-06');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-043', '18-Dec-2017', 'DS-06');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-008', '21-Dec-2017', 'DS-07');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-019', '01-Jan-2018', 'DS-07');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-045', '02-Jan-2018', 'DS-07');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-013', '03-Jan-2018', 'DS-07');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-016', '04-Jan-2018', 'DS-07');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-020', '08-Jan-2018', 'DS-07');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-041', '09-Jan-2018','DS-08');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-017', '09-Jan-2018', 'DS-08');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-049', '25-Jan-2018', 'DS-08');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-034', '29-Jan-2018', 'DS-08');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-018', '01-Feb-2018', 'DS-08');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-008', '12-Feb-2018', 'DS-08');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-002', '16-Feb-2018', 'DS-08');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-033', '12-Mar-2018', 'DS-09');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-001', '12-Mar-2018', 'DS-09');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-022', '15-Mar-2018', 'DS-09');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-041', '24-Mar-2018', 'DS-09');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-018', '08-Apr-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-031', '08-Apr-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-020', '08-Apr-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-031', '20-Apr-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-020', '30-Apr-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-048', '04-May-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-018', '04-May-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-013', '08-May-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-014', '08-May-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-046', '08-May-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-013', '10-May-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-002', '19-May-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-038', '20-May-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-046', '27-May-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-036', '06-Jun-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-032', '07-Jun-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-048', '10-Jun-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-022', '10-Jun-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-010', '13-Jun-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-029', '13-Jun-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-030', '18-Jun-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-025', '30-Jun-2018','DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-037', '30-Jun-2018', 'DS-10');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-027', '09-Jul-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-019', '10-Jul-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-001', '15-Jul-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-001', '25-Jul-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-034', '30-Jul-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-050', '03-Aug-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-008', '10-Aug-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-022', '16-Aug-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-011', '21-Aug-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-032', '27-Aug-2018','DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-009', '01-Sep-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-025', '06-Sep-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-022', '17-Sep-2018', 'DS-11');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-046', '07-Oct-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-027', '07-Oct-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-049', '07-Oct-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-037', '07-Oct-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-011', '07-Oct-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-012', '18-Oct-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-005', '20-Nov-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-030', '24-Nov-2018','DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-047', '24-Nov-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-041', '25-Nov-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-028', '26-Nov-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-034', '26-Nov-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-017', '26-Nov-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-022', '29-Nov-2018', 'DS-12');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-044', '27-Dec-2018', 'DS-13');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-050', '27-Dec-2018', 'DS-13');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-032', '28-Dec-2018', 'DS-13');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-021', '29-Dec-2018', 'DS-13');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-015', '30-Dec-2018', 'DS-13');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-038', '31-Dec-2018', 'DS-13');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-006', '11-Jan-2019', 'DS-04');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-030', '20-Jan-2019', 'DS-13');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-011', '28-Jan-2019', 'DS-13');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-006', '06-Feb-2019', 'DS-14');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-032', '06-Feb-2019','DS-14');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-022', '11-Feb-2019','DS-14');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-025', '18-Feb-2019', 'DS-14');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-031', '19-Feb-2019', 'DS-14');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-025', '22-Feb-2019', 'DS-14');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-023', '27-Feb-2019', 'DS-14');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-026', '27-Feb-2019', 'DS-14');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-018', '02-Mar-2019', 'DS-15');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-050', '11-Mar-2019', 'DS-15');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-040', '11-Mar-2019', 'DS-15');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-050', '14-Mar-2019', 'DS-15');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-012', '28-Mar-2019', 'DS-16');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-020', '28-Mar-2019', 'DS-16');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-022', '28-Mar-2019', 'DS-16');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-023', '06-Apr-2019', 'DS-17');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-042', '08-Apr-2019', 'DS-17');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-050', '09-Apr-2019', 'DS-17');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-050', '14-Apr-2019', 'DS-17');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-035', '19-Apr-2019', 'DS-17');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-029', '21-Apr-2019', 'DS-17');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-046', '03-May-2019', 'DS-18');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-034', '03-May-2019', 'DS-18');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-039', '15-May-2019', 'DS-18');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-005', '04-Jun-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-041', '04-Jun-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-05', 'V-025', '09-Jun-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-032', '12-Jun-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-029', '21-Jun-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-035', '21-Jun-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-015', '22-Jun-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-027', '28-Jun-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-003', '17-Jul-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-038', '20-Jul-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-031', '30-Jul-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-041', '04-Aug-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-033', '06-Aug-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-039', '15-Aug-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-030', '18-Aug-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-02', 'V-013', '02-Sep-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-025', '04-Sep-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-011', '08-Sep-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-027', '13-Sep-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-012', '19-Sep-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-050', '19-Sep-2019', 'DS-19');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-003', '02-Oct-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-018', '07-Oct-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-10', 'V-004', '07-Oct-2019','DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-009', '10-Oct-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-035', '12-Oct-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-024', '15-Oct-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-023', '20-Oct-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-03', 'V-045', '23-Oct-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-09', 'V-026', '27-Oct-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-042', '30-Oct-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-04', 'V-043', '07-Nov-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-07', 'V-047', '13-Nov-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-06', 'V-001', '15-Nov-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-01', 'V-035', '23-Nov-2019', 'DS-20');
+insert into Shelter_Allocation (Shelter_ID, Victim_ID, Enrol_Date, Disaster_ID) values ('SH-08', 'V-044', '27-Nov-2019', 'DS-20');
+
+
+
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS001', 'SH-03', '31-Dec-2016', '04-Jan-2017', 26);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS003', 'SH-08', '31-Dec-2016', '05-Jan-2017', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS005', 'SH-01', '31-Dec-2016', '07-Jan-2017', 27);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS007', 'SH-10', '31-Dec-2016', '02-Jan-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS009', 'SH-07', '31-Dec-2016', '03-Jan-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS002', 'SH-02', '31-Dec-2016', '03-Jan-2017', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS004', 'SH-04', '31-Dec-2016', '03-Jan-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS006', 'SH-06', '31-Dec-2016', '03-Jan-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS008', 'SH-09', '31-Dec-2016', '03-Jan-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS010', 'SH-05', '31-Dec-2016', '03-Jan-2017', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS001', 'SH-01', '26-Jan-2017', '28-Jan-2017', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS001', 'SH-07', '01-Feb-2017', '02-Feb-2017', 35);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS002', 'SH-09', '03-May-2017', '04-May-2017', 35);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS002', 'SH-10', '03-May-2017', '04-May-2017', 35);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS002', 'SH-06', '27-Jan-2017', '28-Jan-2017', 21);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS003', 'SH-07', '06-Mar-2017', '07-Mar-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS003', 'SH-02', '28-Jan-2017', '29-Jan-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS004', 'SH-10', '26-Jan-2017', '27-Jan-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS004', 'SH-07', '29-Jan-2017', '30-Jan-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS005', 'SH-03', '03-May-2017', '04-May-2017', 21);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS005', 'SH-02', '05-May-2017', '07-May-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS006', 'SH-05', '31-Dec-2017', '03-Jan-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS006', 'SH-10', '31-Dec-2017', '02-Jan-2017', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS007', 'SH-04', '21-May-2017', '24-May-2017', 21);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS007', 'SH-02', '22-May-2017', '23-May-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS007', 'SH-09', '01-Jun-2017', '03-Jun-2017', 24);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS009', 'SH-05', '18-Mar-2017', '27-Mar-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS002', 'SH-06', '03-May-2017', '04-May-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS004', 'SH-07', '03-May-2017', '04-May-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS006', 'SH-08', '09-Apr-2017', '11-Apr-2017', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS008', 'SH-09', '10-Apr-2017', '11-Apr-2017', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS008', 'SH-01', '14-Jun-2017', '16-Jun-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS008', 'SH-04', '17-Aug-2017', '19-Aug-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS009', 'SH-10', '22-May-2017', '25-May-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS009', 'SH-04', '28-May-2017', '30-May-2017', 13);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS010', 'SH-10', '27-Apr-2017', '28-Apr-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS010', 'SH-01', '07-Feb-2017', '08-Feb-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS010', 'SH-06', '06-May-2017', '09-May-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS011', 'SH-03', '27-Nov-2017', '29-Nov-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS011', 'SH-04', '27-Nov-2017', '29-Nov-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS011', 'SH-09', '27-Nov-2017', '29-Nov-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS011', 'SH-02', '27-Nov-2017', '29-Nov-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS014', 'SH-02', '07-Jul-2017', '09-Jul-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS014', 'SH-07', '08-Jul-2017', '10-Jul-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS014', 'SH-04', '10-Jul-2017', '11-Jul-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS014', 'SH-10', '07-Jul-2017', '08-Jul-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS014', 'SH-09', '07-Jul-2017', '08-Jul-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS015', 'SH-05', '23-Sep-2017', '24-Sep-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS015', 'SH-07', '23-Sep-2017', '24-Sep-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS015', 'SH-01', '23-Sep-2017', '24-Sep-2017', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS015', 'SH-08', '23-Sep-2017', '24-Sep-2017', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS016', 'SH-03', '11-Oct-2017', '13-Oct-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS016', 'SH-04', '11-Oct-2017', '13-Oct-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS016', 'SH-09', '11-Oct-2017', '13-Oct-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS016', 'SH-07', '11-Oct-2017', '13-Oct-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS016', 'SH-10', '11-Oct-2017', '13-Oct-2017', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS017', 'SH-02', '06-Nov-2017', '07-Nov-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS017', 'SH-05', '06-Nov-2017', '07-Nov-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS017', 'SH-03', '06-Nov-2017', '07-Nov-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS017', 'SH-06', '06-Nov-2017', '07-Nov-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS017', 'SH-01', '06-Nov-2017', '07-Nov-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS029', 'SH-10', '22-Jul-2017', '23-Jul-2017', 5);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS029', 'SH-07', '25-Sep-2017', '26-Sep-2017', 5);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS029', 'SH-02', '13-Oct-2017', '14-Oct-2017', 5);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS029', 'SH-05', '08-Nov-2017', '10-Nov-2017', 5);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS033', 'SH-06', '16-Jul-2017', '19-Jul-2017', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS033', 'SH-09', '24-Sep-2017', '26-Sep-2017', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS033', 'SH-05', '15-Jul-2017', '17-Jul-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS034', 'SH-06', '30-Sep-2017', '01-Oct-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS034', 'SH-01', '29-Sep-2017', '01-Oct-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS034', 'SH-07', '29-Sep-2017', '01-Oct-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS034', 'SH-03', '29-Sep-2017', '01-Oct-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS035', 'SH-02', '15-Nov-2017', '16-Nov-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS035', 'SH-01', '15-Nov-2017', '16-Nov-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS035', 'SH-10', '15-Nov-2017', '16-Nov-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS035', 'SH-09', '15-Nov-2017', '16-Nov-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS035', 'SH-04', '15-Nov-2017', '16-Nov-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS048', 'SH-01', '05-Nov-2017', '07-Nov-2017', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS048', 'SH-06', '08-Jul-2017', '10-Jul-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS048', 'SH-05', '05-Dec-2017', '07-Dec-2017', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS048', 'SH-03', '29-Jul-2017', '30-Jul-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS051', 'SH-07', '14-Aug-2017', '17-Aug-2017', 18);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS051', 'SH-08', '14-Oct-2017', '17-Oct-2017', 18);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS051', 'SH-05', '14-Nov-2017', '17-Nov-2017', 18);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS051', 'SH-09', '23-Jul-2017', '24-Jul-2017', 16);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS051', 'SH-10', '19-Aug-2017', '20-Aug-2017', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS054', 'SH-01', '25-Nov-2017', '27-Nov-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS054', 'SH-02', '27-Dec-2017', '28-Dec-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS054', 'SH-03', '25-Jul-2017', '27-Jul-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS054', 'SH-04', '27-Sep-2017', '28-Sep-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS054', 'SH-05', '25-Aug-2017', '27-Aug-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS054', 'SH-06', '29-Dec-2017', '30-Dec-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS054', 'SH-07', '05-Nov-2017', '07-Nov-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS054', 'SH-08', '23-Aug-2017', '25-Aug-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS054', 'SH-09', '27-Nov-2017', '29-Nov-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS054', 'SH-10', '18-Oct-2017', '20-Oct-2017', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS057', 'SH-05', '31-Dec-2017', '02-Jan-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS057', 'SH-10', '25-Dec-2017', '26-Dec-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS057', 'SH-06', '31-Dec-2017', '01-Jan-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS057', 'SH-01', '25-Dec-2017', '27-Dec-2017', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS001', 'SH-06', '10-Jun-2018', '13-Jun-2018', 26);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS001', 'SH-09', '25-Dec-2018', '13-Dec-2018', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS001', 'SH-10', '27-Dec-2018', '29-Dec-2018', 13);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS002', 'SH-03', '25-Mar-2018', '27-Mar-2018', 24);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS002', 'SH-04', '25-Dec-2018', '27-Dec-2018', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS002', 'SH-02', '25-Mar-2018', '27-Mar-2018', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS003', 'SH-10', '25-Dec-2018', '27-Dec-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS003', 'SH-01', '25-Dec-2018', '27-Dec-2018', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS004', 'SH-10', '19-Dec-2018', '23-Dec-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS004', 'SH-07', '19-Dec-2018', '23-Dec-2018', 18);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS005', 'SH-06', '20-Dec-2018', '22-Dec-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS005', 'SH-05', '19-Dec-2018', '20-Dec-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS006', 'SH-06', '31-Dec-2018', '03-Jan-2018', 16);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS007', 'SH-03', '03-Dec-2018', '08-Dec-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS007', 'SH-10', '03-Dec-2018', '07-Dec-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS008', 'SH-09', '10-Apr-2018', '11-Apr-2018', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS008', 'SH-01', '14-Jun-2018', '16-Jun-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS008', 'SH-04', '17-Aug-2018', '19-Aug-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS009', 'SH-10', '22-May-2018', '25-May-2018', 26);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS009', 'SH-04', '28-May-2018', '30-May-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS010', 'SH-06', '06-May-2018', '09-May-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS010', 'SH-03', '02-May-2018', '04-May-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS012', 'SH-02', '23-Oct-2018', '25-Oct-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS012', 'SH-08', '23-Nov-2018', '25-Nov-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS012', 'SH-02', '23-Dec-2018', '25-Dec-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS012', 'SH-07', '23-Dec-2018', '25-Dec-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS018', 'SH-02', '02-Jan-2018', '03-Jan-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS018', 'SH-04', '02-Jan-2018', '03-Jan-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS018', 'SH-06', '02-Jan-2018', '03-Jan-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS018', 'SH-08', '02-Jan-2018', '03-Jan-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS019', 'SH-01', '21-Feb-2018', '22-Feb-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS019', 'SH-03', '22-Feb-2018', '23-Feb-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS019', 'SH-05', '21-Feb-2018', '22-Feb-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS019', 'SH-07', '22-Feb-2018', '23-Feb-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS020', 'SH-09', '16-Apr-2018', '17-Apr-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS020', 'SH-10', '16-Apr-2018', '17-Apr-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS020', 'SH-02', '16-Apr-2018', '17-Apr-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS020', 'SH-04', '16-Apr-2018', '17-Apr-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS021', 'SH-06', '21-Jun-2018', '22-Jun-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS021', 'SH-08', '21-Jun-2018', '22-Jun-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS021', 'SH-10', '21-Jun-2018', '22-Jun-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS021', 'SH-01', '21-Jun-2018', '22-Jun-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS022', 'SH-03', '04-Aug-2018', '07-Aug-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS022', 'SH-05', '04-Aug-2018', '07-Aug-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS022', 'SH-07', '04-Aug-2018', '07-Aug-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS022', 'SH-09', '04-Aug-2018', '07-Aug-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS023', 'SH-02', '28-Sep-2018', '29-Sep-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS023', 'SH-04', '29-Sep-2018', '30-Sep-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS023', 'SH-06', '28-Sep-2018', '29-Sep-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS023', 'SH-08', '29-Sep-2018', '30-Sep-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS024', 'SH-10', '06-Oct-2018', '08-Oct-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS024', 'SH-01', '06-Oct-2018', '08-Oct-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS024', 'SH-03', '06-Oct-2018', '08-Oct-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS024', 'SH-05', '06-Oct-2018', '08-Oct-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS030', 'SH-02', '27-Oct-2018', '28-Oct-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS030', 'SH-07', '27-Nov-2018', '28-Nov-2018', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS030', 'SH-01', '27-Oct-2018', '28-Oct-2018', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS030', 'SH-05', '27-Nov-2018', '28-Nov-2018', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS036', 'SH-01', '08-Jan-2018', '10-Jan-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS036', 'SH-02', '04-Jan-2018', '05-Jan-2018', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS036', 'SH-03', '07-Jan-2018', '08-Jan-2018', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS037', 'SH-04', '01-Mar-2018', '03-Mar-2018', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS037', 'SH-05', '01-Mar-2018', '03-Mar-2018', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS037', 'SH-09', '01-Mar-2018', '03-Mar-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS038', 'SH-06', '26-Apr-2018', '27-Apr-2018', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS038', 'SH-02', '26-Apr-2018', '27-Apr-2018', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS038', 'SH-07', '26-Apr-2018', '27-Apr-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS039', 'SH-08', '29-Jul-2018', '01-Aug-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS039', 'SH-09', '01-Jul-2018', '02-Jul-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS040', 'SH-10', '23-Aug-2018', '24-Aug-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS040', 'SH-08', '23-Aug-2018', '24-Aug-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS041', 'SH-03', '01-Oct-2018', '03-Oct-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS041', 'SH-07', '01-Oct-2018', '03-Oct-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS049', 'SH-10', '21-Jun-2018', '22-Jun-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS049', 'SH-01', '21-Jun-2018', '22-Jun-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS049', 'SH-03', '05-Aug-2018', '07-Aug-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS049', 'SH-05', '07-Aug-2018', '09-Aug-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS052', 'SH-02', '08-Jan-2018', '10-Jan-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS052', 'SH-01', '08-Jun-2018', '22-Jun-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS052', 'SH-05', '08-Aug-2018', '10-Aug-2018', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS055', 'SH-09', '18-May-2018', '20-May-2018', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS055', 'SH-07', '30-Aug-2018', '01-Sep-2018', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS055', 'SH-01', '18-May-2018', '20-May-2018', 35);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS055', 'SH-03', '30-Aug-2018', '01-Sep-2018', 35);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS055', 'SH-04', '18-May-2018', '20-May-2018', 35);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS055', 'SH-06', '30-Aug-2018', '01-Sep-2018', 35);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS058', 'SH-09', '20-Jul-2018', '21-Jul-2018', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS058', 'SH-10', '20-Aug-2018', '21-Aug-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS058', 'SH-06', '28-Sep-2018', '29-Sep-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS059', 'SH-01', '20-Oct-2018', '21-Oct-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS059', 'SH-04', '20-Nov-2018', '21-Nov-2018', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS001', 'SH-04', '11-Apr-2019', '15-Apr-2019', 28);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS001', 'SH-01', '23-Nov-2019', '24-Nov-2019', 12);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS003', 'SH-06', '20-May-2019', '23-May-2019', 16);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS003', 'SH-07', '23-Oct-2019', '25-Oct-2019', 24);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS004', 'SH-10', '14-Jun-2019', '16-Jun-2019', 19);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS004', 'SH-03', '30-Aug-2019', '01-May-2019', 23);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS005', 'SH-01', '19-Oct-2019', '20-Oct-2019', 12);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS005', 'SH-05', '19-Oct-2019', '20-Oct-2019', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS005', 'SH-04', '19-Oct-2019', '20-Oct-2019', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS006', 'SH-07', '20-Jul-2019', '24-Jul-2019', 29);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS006', 'SH-05', '03-Jun-2019', '04-Jun-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS007', 'SH-10', '27-Aug-2019', '29-Aug-2019', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS007', 'SH-06', '29-Sep-2019', '30-Sep-2019', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS007', 'SH-01', '25-Jan-2019', '27-Jan-2019', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS008', 'SH-01', '14-Jun-2019', '16-Jun-2019', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS008', 'SH-04', '17-Aug-2019', '19-Aug-2019', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS009', 'SH-10', '22-May-2019', '25-May-2019', 26);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS009', 'SH-04', '28-May-2019', '30-May-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS010', 'SH-05', '23-Jan-2019', '25-Jan-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS010', 'SH-03', '06-May-2018', '09-May-2018', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS013', 'SH-02', '01-Aug-2019', '02-Aug-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS013', 'SH-07', '27-May-2019', '29-May-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS013', 'SH-09', '03-May-2019', '05-May-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS013', 'SH-01', '13-May-2019', '15-May-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS025', 'SH-01', '25-Mar-2019', '26-Mar-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS025', 'SH-02', '25-Mar-2019', '26-Mar-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS025', 'SH-03', '25-Mar-2019', '26-Mar-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS025', 'SH-04', '25-Mar-2019', '26-Mar-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS026', 'SH-05', '01-Jun-2019', '02-Jun-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS026', 'SH-06', '29-Mar-2019', '01-Mar-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS026', 'SH-07', '31-May-2019', '02-Jun-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS026', 'SH-08', '31-May-2019', '02-Jun-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS027', 'SH-09', '06-Jul-2019', '09-Jul-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS027', 'SH-10', '01-Jul-2019', '02-Jul-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS027', 'SH-02', '07-Jul-2019', '08-Jul-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS027', 'SH-04', '07-Jul-2019', '08-Jul-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS028', 'SH-06', '15-Nov-2019', '16-Nov-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS028', 'SH-08', '17-Nov-2019', '19-Nov-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS028', 'SH-10', '17-Nov-2019', '19-Nov-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS028', 'SH-01', '17-Nov-2019', '19-Nov-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS031', 'SH-07', '31-May-2019', '02-Jun-2019', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS031', 'SH-06', '01-Aug-2019', '03-Aug-2019', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS031', 'SH-02', '31-May-2019', '01-Jun-2019', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS031', 'SH-08', '02-Apr-2019', '04-Apr-2019', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS032', 'SH-09', '31-May-2019', '02-Jun-2019', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS032', 'SH-01', '01-Aug-2019', '03-Aug-2019', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS032', 'SH-10', '31-May-2019', '01-Jun-2019', 10);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS032', 'SH-05', '01-Aug-2019', '03-Aug-2019', 15);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS042', 'SH-02', '27-Mar-2019', '28-Mar-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS042', 'SH-04', '01-Apr-2019', '03-Apr-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS043', 'SH-06', '01-Jun-2019', '04-Jun-2019', 24);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS043', 'SH-08', '07-Jun-2019', '08-Jun-2019', 26);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS044', 'SH-10', '07-Jul-2019', '08-Jul-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS044', 'SH-01', '09-Jul-2019', '10-Jul-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS045', 'SH-03', '19-Jul-2019', '20-Jul-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS045', 'SH-05', '21-Jul-2019', '22-Jul-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS046', 'SH-07', '07-Aug-2019', '08-Aug-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS046', 'SH-09', '25-Aug-2019', '27-Aug-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS047', 'SH-01', '20-Nov-2019', '21-Nov-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS047', 'SH-03', '16-Nov-2019', '17-Nov-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS050', 'SH-02', '01-Aug-2019', '03-Aug-2019', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS050', 'SH-04', '01-Sep-2019', '04-Sep-2019', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS050', 'SH-07', '01-Jun-2019', '02-Jun-2019', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS050', 'SH-09', '01-Jul-2019', '02-Jul-2019', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS050', 'SH-10', '25-Mar-2019', '26-Mar-2019', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS053', 'SH-07', '07-Aug-2019', '09-Aug-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS053', 'SH-09', '14-Mar-2019', '17-Mar-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS053', 'SH-03', '08-Aug-2019', '09-Aug-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS053', 'SH-01', '15-Mar-2019', '17-Mar-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS056', 'SH-03', '04-Feb-2019', '07-Feb-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS056', 'SH-08', '07-Jul-2019', '09-Jul-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS056', 'SH-01', '27-Mar-2019', '29-Mar-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS056', 'SH-10', '05-Mar-2019', '07-Mar-2019', 25);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS056', 'SH-10', '01-Apr-2019', '03-Apr-2019', 20);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS060', 'SH-04', '15-Nov-2019', '17-Nov-2019', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS060', 'SH-05', '30-Mar-2019', '01-Apr-2019', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS060', 'SH-10', '06-Oct-2019', '07-Oct-2019', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS060', 'SH-03', '08-Aug-2019', '09-Aug-2019', 30);
+insert into Food_and_Supply_Allocation (FS_ID, Shelter_ID, Send_Date, Receive_Date, Sent_Quantity) values ('FS060', 'SH-02', '15-Mar-2019', '17-Mar-2019', 30);
+
+
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S04', 'V-010', '21-Dec-2016', 'Moderate', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S04', 'V-039', '24-Dec-2016', 'Severe', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-011', '25-Dec-2016', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-048', '27-Dec-2016', 'Severe', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-017', '29-Dec-2016', 'Moderate', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S10', 'V-040', '28-Jan-2017', 'Moderate', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S10', 'V-003', '29-Jan-2017', 'Moderate', 'Malaria');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S11', 'V-020', '23-Feb-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S11', 'V-022', '27-Feb-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S12', 'V-036', '23-Mar-2017', 'Severe', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S14', 'V-029', '19-Apr-2017', 'Moderate', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S14', 'V-011', '13-Jun-2017', 'Severe', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S16', 'V-035', '16-Jul-2017', 'Severe', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-016', '18-Jul-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S18', 'V-049', '24-Aug-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S14', 'V-006', '27-Aug-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S14', 'V-030', '29-Aug-2017', 'Severe', 'Viral hepatitis');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S16', 'V-017', '31-Aug-2017', 'Moderate', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S18', 'V-015', '05-Sep-2017', 'Moderate', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S23', 'V-045', '07-Sep-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S23', 'V-042', '08-Sep-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S23', 'V-002', '09-Sep-2017', 'Severe', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S25', 'V-033', '06-Oct-2017', 'Moderate', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S25', 'V-007', '07-Oct-2017', 'Moderate', 'Diarrhea diseases');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S26', 'V-043', '28-Oct-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S30', 'V-021', '06-Nov-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-024', '10-Nov-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-050', '10-Dec-2017', 'Moderate', 'Chest infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S40', 'V-024', '15-Dec-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S40', 'V-043', '21-Dec-2017', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S40', 'V-008', '25-Dec-2017', 'Moderate', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S40', 'V-019', '05-Jan-2018', 'Moderate', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S04', 'V-045', '07-Jan-2018', 'Severe', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S04', 'V-013', '08-Jan-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-016', '09-Jan-2018', 'Severe', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-020', '11-Jan-2018', 'Severe', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-041', '14-Jan-2018', 'Severe', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-017', '15-Jan-2018', 'Severe', 'Viral hepatitis');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-049', '26-Jan-2018', 'Moderate', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-034', '30-Jan-2018', 'Moderate', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S26', 'V-018', '03-Feb-2018', 'Severe', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S26', 'V-008', '14-Feb-2018', 'Moderate', 'Malaria');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S25', 'V-002', '19-Feb-2018', 'Moderate', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S25', 'V-033', '17-Mar-2018', 'Moderate', 'Diarrhea diseases');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-001', '17-Mar-2018', 'Severe', 'Viral hepatitis');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S25', 'V-024', '19-Mar-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S23', 'V-041', '17-Mar-2018', 'Severe', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S23', 'V-018', '09-Apr-2018', 'Moderate', 'Diarrhea diseases');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S26', 'V-031', '09-Apr-2018', 'Severe', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S04', 'V-020', '10-Apr-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S11', 'V-031', '23-Apr-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S12', 'V-044', '01-May-2018', 'Moderate', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S10', 'V-036', '05-May-2018', 'Moderate', 'Diarrhea diseases');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S14', 'V-011', '05-May-2018', 'Severe', 'Chest infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S16', 'V-015', '09-May-2018', 'Severe', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-043', '09-May-2018', 'Severe', 'Diarrhea diseases');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-034', '09-May-2018', 'Severe', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S16', 'V-049', '15-May-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S18', 'V-013', '20-May-2018', 'Severe', 'Diarrhea diseases');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S18', 'V-044', '25-May-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S18', 'V-032', '28-May-2018', 'Moderate', 'Diarrhea diseases');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-020', '07-Jun-2018', 'Severe', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-005', '09-Jun-2018', 'Moderate', 'Diarrhea diseases');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S10', 'V-035', '11-Jun-2018', 'Moderate', 'Viral hepatitis');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S14', 'V-048', '12-Jun-2018', 'Moderate', 'Viral hepatitis');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S16', 'V-042', '14-Jun-2018', 'Severe', 'Malaria');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S18', 'V-031', '15-Jun-2018', 'Severe', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S23', 'V-039', '19-Jun-2018', 'Moderate', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S14', 'V-013', '01-Jul-2018', 'Moderate', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S14', 'V-006', '01-Jul-2018', 'Severe', 'Chest infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-038', '10-Jul-2018', 'Severe', 'Malaria');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S30', 'V-019', '12-Jul-2018', 'Severe', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S30', 'V-001', '16-Jul-2018', 'Severe', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S04', 'V-001', '26-Jul-2018', 'Severe', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-034', '31-Jul-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S10', 'V-050', '04-Aug-2018', 'Moderate', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S11', 'V-008', '12-Aug-2018', 'Severe', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-022', '17-Aug-2018', 'Severe', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S30', 'V-011', '23-Aug-2018', 'Severe', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S26', 'V-032', '28-Aug-2018', 'Moderate', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S25', 'V-009', '02-Sep-2018', 'Moderate', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S25', 'V-025', '15-Sep-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S25', 'V-022', '18-Sep-2018', 'Severe', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S12', 'V-046', '08-Oct-2018', 'Moderate', 'Diarrhea diseases');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S12', 'V-027', '08-Oct-2018', 'Moderate', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-049', '08-Oct-2018', 'Moderate', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S10', 'V-037', '08-Oct-2018', 'Severe', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S11', 'V-011', '09-Oct-2018', 'Severe', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S12', 'V-012', '19-Oct-2018', 'Severe', 'Diarrhea diseases');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S16', 'V-005', '21-Nov-2018', 'Moderate', 'Viral hepatitis');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S16', 'V-047', '25-Nov-2018', 'Moderate', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-041', '26-Nov-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S18', 'V-028', '27-Nov-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S25', 'V-034', '27-Nov-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S40', 'V-017', '28-Nov-2018', 'Severe', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S25', 'V-022', '29-Nov-2018', 'Severe', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S10', 'V-044', '28-Dec-2018', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S11', 'V-050', '28-Dec-2018', 'Moderate', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S14', 'V-032', '30-Dec-2018', 'Severe', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S16', 'V-021', '31-Dec-2018', 'Moderate', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-015', '31-Dec-2018', 'Severe', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S12', 'V-038', '01-Jan-2019', 'Severe', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S12', 'V-006', '12-Jan-2019', 'Severe', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S04', 'V-030', '21-Jan-2019', 'Severe', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S11', 'V-014', '28-Feb-2019', 'Severe', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S10', 'V-006', '07-Feb-2019', 'Severe', 'Diarrhea diseases');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S12', 'V-032', '07-Feb-2019', 'Severe', 'Viral hepatitis');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-022', '12-Feb-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S11', 'V-025', '19-Feb-2019', 'Moderate', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S18', 'V-031', '20-Feb-2019', 'Moderate', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-025', '23-Feb-2019', 'Moderate', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-023', '28-Feb-2019', 'Severe', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-026', '28-Feb-2019', 'Moderate', 'Typhoid Fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-018', '03-Mar-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-050', '12-Mar-2019', 'Moderate', 'Chest infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S17', 'V-040', '12-Mar-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S30', 'V-050', '15-Mar-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-012', '29-Mar-2019', 'Severe', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S30', 'V-020', '29-Mar-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S30', 'V-022', '29-Mar-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S30', 'V-023', '07-Apr-2019', 'Moderate', 'Chest infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S04', 'V-042', '08-Apr-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S40', 'V-050', '09-Apr-2019', 'Severe', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-050', '15-Apr-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S25', 'V-035', '20-Apr-2019', 'Moderate', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S11', 'V-029', '24-Apr-2019', 'Severe', 'Malaria');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S10', 'V-046', '04-May-2019', 'Severe', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S40', 'V-034', '04-May-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S23', 'V-039', '17-May-2019', 'Severe', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S16', 'V-005', '04-Jun-2019', 'Moderate', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S18', 'V-041', '05-Jun-2019', 'Severe', 'Asthma');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S11', 'V-025', '10-Jun-2019', 'Severe', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S40', 'V-032', '15-Jun-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S04', 'V-003', '18-Jul-2019', 'Severe', 'Chest infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-038', '21-Jul-2019', 'Moderate', 'Malaria');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S16', 'V-031', '30-Jul-2019', 'Moderate', 'Chest infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S11', 'V-041', '04-Aug-2019', 'Severe', 'Viral hepatitis');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S12', 'V-033', '07-Aug-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S04', 'V-039', '16-Aug-2019', 'Severe', 'Viral hepatitis');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S05', 'V-013', '08-Sep-2019', 'Severe', 'Acute respiratory infection');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S23', 'V-025', '08-Sep-2019', 'Moderate', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S26', 'V-014', '08-Sep-2019', 'Moderate', 'Malaria');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S26', 'V-027', '14-Sep-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S40', 'V-003', '03-Oct-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-018', '08-Oct-2019', 'Severe', 'Malaria');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S04', 'V-004', '08-Oct-2019', 'Good', NULL);
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S40', 'V-043', '08-Nov-2019', 'Severe', 'Measles');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S30', 'V-047', '14-Nov-2019', 'Severe', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S35', 'V-001', '16-Nov-2018', 'Moderate', 'Dengue fever');
+insert into Medical_Examination (Staff_ID, Victim_ID, Examined_Date, Status, Sickness) values ('S16', 'V-036', '24-Nov-2019', 'Moderate', 'Viral hepatitis');
+
+
+
+
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-007', 'FS014', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-008', 'FS015', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-010', 'FS016', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-011', 'FS017', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-012', 'FS018', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-013', 'FS019', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-014', 'FS020', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-015', 'FS021', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-017', 'FS022', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-019', 'FS023', 150);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-020', 'FS024', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-023', 'FS025', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-026', 'FS026', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-032', 'FS027', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-047', 'FS028', 100);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-007', 'FS033', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-008', 'FS034', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-010', 'FS035', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-012', 'FS036', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-013', 'FS037', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-014', 'FS038', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-015', 'FS039', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-017', 'FS040', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-019', 'FS041', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-023', 'FS042', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-026', 'FS043', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-032', 'FS044', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-035', 'FS045', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-038', 'FS046', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-046', 'FS047', 25); 	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-007', 'FS029', 20);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-035', 'FS031', 25);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-026', 'FS031', 25);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-020', 'FS030', 25);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-017', 'FS030', 25);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-008', 'FS011', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-011', 'FS011', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-012', 'FS012', 30);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-017', 'FS012', 50);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-035', 'FS013', 50);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-047', 'FS013', 50);						
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-047', 'FS032',50);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-038', 'FS060', 100);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-035', 'FS060', 50);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-010', 'FS057', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-011', 'FS057', 50);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-015', 'FS058', 40);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-019', 'FS058', 40);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-020', 'FS059', 50);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-007', 'FS048', 45);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-008', 'FS048', 35);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-038', 'FS050', 40);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-046', 'FS050', 30);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-047', 'FS050', 30);	
+insert into Donation_item (Donation_No, FS_ID, Quantity) values ('DN-010', 'FS049', 45);
+insert into Donation_item (Donation_No, FS_ID, Quantity) values ('DN-008', 'FS049', 55);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-032', 'FS053', 25);		
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-035', 'FS053', 35);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-026', 'FS053', 40);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-013', 'FS052', 40);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-014', 'FS052', 20);	
+insert into Donation_item (Donation_No, FS_ID, Quantity) values ('DN-011', 'FS051', 35);
+insert into Donation_item (Donation_No, FS_ID, Quantity) values ('DN-008', 'FS051', 45);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-026', 'FS056', 60);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-023', 'FS056', 60);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-012', 'FS055', 70);
+insert into Donation_item (Donation_No, FS_ID, Quantity) values ('DN-011', 'FS054', 100);
+insert into Donation_item (Donation_No, FS_ID, Quantity) values ('DN-008', 'FS054', 100);	
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-012', 'FS047', 25);
+insert into Donation_item (Donation_No, FS_ID, Quantity) values ('DN-011', 'FS019', 30);	
+insert into Donation_item (Donation_No, FS_ID, Quantity) values ('DN-007', 'FS055', 70);
+insert into Donation_item (Donation_No, FS_ID, Quantity) values ('DN-008', 'FS055', 60);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-049', 'FS001', 40);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-049', 'FS002', 50);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-049', 'FS003', 32);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-050', 'FS004', 40);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-050', 'FS005', 34);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-050', 'FS006', 24);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-041', 'FS007', 55);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-041', 'FS008', 45);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-041', 'FS009', 55);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-041', 'FS010', 66);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-044', 'FS001', 30);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-044', 'FS002', 60);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-044', 'FS003', 38);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-036', 'FS004', 40);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-036', 'FS005', 39);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-029', 'FS006', 30);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-029', 'FS007', 40);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-029', 'FS008', 40);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-025', 'FS009', 52);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-025', 'FS010', 70);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-025', 'FS001', 50);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-002', 'FS002', 43);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-002', 'FS003', 43);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-002', 'FS004', 42);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-002', 'FS005', 43);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-004', 'FS006', 44);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-004', 'FS007', 45);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-004', 'FS008', 45);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-004', 'FS009', 63);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-005', 'FS010', 64);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-005', 'FS001', 80);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-005', 'FS002', 47);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-006', 'FS003', 37);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-006', 'FS004', 38);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-006', 'FS005', 34);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-021', 'FS006', 52);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-021', 'FS007', 60);
+insert into Donation_Item (Donation_No, FS_ID, Quantity) values ('DN-021', 'FS008', 40);
+
+
+
+
+
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S36', 'T16', '02-May-2019', 'SH-05', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S36', 'T07', '02-Jan-2017', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S40', 'T18', '24-Jun-2018', 'SH-08', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S08', 'T05', '01-Jul-2019', 'SH-02', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S14', 'T16', '25-Mar-2018', 'SH-03', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S31', 'T06', '01-May-2017', 'SH-02', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S35', 'T17', '11-Sep-2018', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S31', 'T06', '13-Mar-2017', 'SH-01', '10:00 PM', '5:00 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S09', 'T14', '01-Jun-2019', 'SH-06', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S38', 'T10', '13-Apr-2017', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S11', 'T19', '22-May-2017', 'SH-05', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S08', 'T10', '24-Jan-2018', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S33', 'T05', '03-Jul-2019', 'SH-07', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S09', 'T15', '03-Mar-2017', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S05', 'T18', '20-Nov-2019', 'SH-10', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S08', 'T10', '04-Jun-2017', 'SH-09', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S23', 'T16', '09-Feb-2018', 'SH-05', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S21', 'T15', '04-Jan-2019', 'SH-07', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S08', 'T06', '18-May-2018', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T16', '07-Aug-2019', 'SH-08', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T17', '12-Sep-2017', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S30', 'T17', '26-Feb-2019', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S13', 'T03', '22-May-2018', 'SH-08', '12:00 AM', '8:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S04', 'T17', '03-Dec-2018', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S06', 'T06', '05-Mar-2017', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S35', 'T17', '18-Mar-2019', 'SH-06', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S37', 'T08', '22-Apr-2019', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T19', '19-Jan-2018', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S23', 'T19', '28-Jun-2019', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T17', '23-Jun-2019', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S13', 'T03', '08-Oct-2019', 'SH-04', '12:00 AM', '8:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S27', 'T16', '01-Sep-2018', 'SH-01', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S37', 'T11', '02-Jul-2019', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S28', 'T12', '04-May-2017', 'SH-07', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T18', '18-Feb-2018', 'SH-06', '9:00 PM', '9:00 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S33', 'T05', '05-May-2019', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S20', 'T01', '14-Sep-2017', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S32', 'T09', '02-Jun-2018', 'SH-09', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S03', 'T13', '21-Mar-2019', 'SH-09', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S34', 'T04', '02-Jul-2018', 'SH-09', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S07', 'T15', '25-Aug-2018', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S11', 'T18', '09-Apr-2018', 'SH-05', '11:00 PM', '1:00 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S27', 'T16', '07-Sep-2017', 'SH-01', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S35', 'T18', '22-Jun-2017', 'SH-01', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T16', '29-Jan-2017', 'SH-06', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S23', 'T19', '26-Mar-2018', 'SH-09', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S30', 'T19', '10-Jul-2017', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S24', 'T05', '28-Jun-2017', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S10', 'T20', '24-Jul-2019', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S22', 'T08', '21-Jul-2019', 'SH-07', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T18', '11-May-2018', 'SH-04', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S28', 'T12', '28-Nov-2017', 'SH-01', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S31', 'T02', '27-Sep-2017', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S29', 'T04', '28-Apr-2018', 'SH-10', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S30', 'T19', '23-Dec-2017', 'SH-06', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S29', 'T04', '12-Feb-2017', 'SH-06', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S07', 'T14', '07-Apr-2017', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S27', 'T16', '23-Jun-2017', 'SH-03', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T18', '23-Dec-2017', 'SH-08', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S01', 'T16', '18-Jun-2019', 'SH-07', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T16', '14-Dec-2017', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S17', 'T16', '17-Jun-2019', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S14', 'T19', '01-Aug-2018', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S24', 'T01', '15-May-2019', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S25', 'T16', '02-Aug-2017', 'SH-05', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S02', 'T14', '23-Apr-2017', 'SH-02', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S40', 'T17', '16-Jan-2019', 'SH-05', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S07', 'T13', '28-Oct-2018', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S05', 'T18', '27-Jun-2019', 'SH-08', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S26', 'T17', '03-Feb-2018', 'SH-05', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T18', '13-Jan-2019', 'SH-06', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S15', 'T04', '03-Sep-2017', 'SH-09', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S20', 'T11', '29-Mar-2019', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S13', 'T04', '11-Mar-2017', 'SH-09', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S23', 'T18', '22-Mar-2017', 'SH-01', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S31', 'T11', '18-May-2017', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S05', 'T17', '06-Feb-2019', 'SH-06', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S34', 'T04', '24-Jun-2019', 'SH-04', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S21', 'T15', '17-Oct-2017', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S13', 'T04', '17-Nov-2018', 'SH-09', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S33', 'T02', '21-Apr-2019', 'SH-07', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S13', 'T03', '04-Mar-2017', 'SH-09', '12:00 AM', '8:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T17', '16-Mar-2017', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S19', 'T06', '12-Nov-2019', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S28', 'T06', '06-Jun-2018', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S06', 'T12', '04-Feb-2018', 'SH-10', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S07', 'T15', '10-Aug-2018', 'SH-08', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S10', 'T18', '04-Jul-2019', 'SH-07', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S26', 'T20', '10-Jul-2017', 'SH-09', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S15', 'T03', '16-Mar-2017', 'SH-03', '12:00 AM', '8:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S34', 'T04', '10-Sep-2017', 'SH-04', '5:00 PM', '11:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S16', 'T16', '02-Jul-2019', 'SH-04', '12:00 AM', '11:59 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T17', '27-Dec-2018', 'SH-05', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S19', 'T09', '25-Apr-2017', 'SH-01', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S26', 'T17', '01-Jul-2017', 'SH-03', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S02', 'T14', '03-Oct-2018', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S36', 'T16', '28-Jul-2017', 'SH-01', '12:00 AM', '8:59 AM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S39', 'T05', '25-Oct-2019', 'SH-04', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S31', 'T11', '27-Mar-2018', 'SH-10', '9:00 AM', '5:00 PM');
+insert into Workload (Staff_ID, Task_ID, TaskDate, Shelter_ID, StartTime, EndTime) values ('S18', 'T19', '18-May-2017', 'SH-03', '12:00 AM', '11:59 PM');
+
+
+
+
+COMMIT;
+
+SELECT COUNT(*) AS No_Of_Shelter FROM Shelter;
+SELECT COUNT(*) AS No_Of_Disaster FROM Disaster;
+SELECT COUNT(*) AS No_Of_Victim FROM Victim;
+SELECT COUNT(*) AS No_Of_Staff FROM Staff;
+SELECT COUNT(*) AS No_Of_Task FROM Task;
+SELECT COUNT(*) AS No_Of_Food_And_Supply FROM Food_and_Supply;
+SELECT COUNT(*) AS No_Of_Donor FROM Donor;
+SELECT COUNT(*) AS No_Of_Donation FROM Donation;
+

@@ -1,0 +1,35 @@
+create table TASK (
+	Task_ID VARCHAR(5) NOT NULL,
+	Task_Category VARCHAR(15),
+	Task_Desc VARCHAR(40),
+PRIMARY KEY (Task_ID)
+);
+
+COLUMN Task_ID FORMAT A12 HEADING 'Task ID';
+COLUMN Task_Category FORMAT A14 HEADING 'Task Category';
+COLUMN Task_Desc FORMAT A34 HEADING 'Task Desc';
+
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T01', 'CLEANING', 'CLEAN SHELTER HALL');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T02', 'CLEANING', 'CLEAN SHELTER RESTROOMS');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T03', 'SECURITY', 'DAY PATROL');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T04', 'SECURITY', 'NIGHT PATROL');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T05', 'DONATION', 'DONATION REGISTRATION');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T06', 'DONATION', 'DONATION ALLOCATION');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T07', 'DONATION', 'ACCOUNTS');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T08', 'FOOD_SUPPLY', 'DISTRIBUTE FOOD');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T09', 'FOOD_SUPPLY', 'DISTRIBUTE DAILY SUPPLIES');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T10', 'FOOD_SUPPLY', 'DISTRIBUTE WOMENS SUPPLIES');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T11', 'FOOD_SUPPLY', 'STOCK COUNT');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T12', 'LOGISTICS', 'VICTIM REGISTRATION');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T13', 'LOGISTICS', 'VICTIM CARE');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T14', 'LOGISTICS', 'CHILD CARE');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T15', 'LOGISTICS', 'VICTIM FACILITATING');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T16', 'MEDICAL', 'PROVIDE FIRST AID TREATMENT');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T17', 'MEDICAL', 'ASSESS VICTIM CONDITION');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T18', 'MEDICAL', 'STANDBY FOR EMERGENCY');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T19', 'MEDICAL', 'MEDICAL CHECKUP');
+insert into TASK (Task_ID, Task_Category, Task_Desc) values ('T20', 'MEDICAL', 'ASSIST PARAMEDICS AND PHYSICIANS');
+
+
+
+
